@@ -1,40 +1,75 @@
 package com.example.flavourfolio
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.flavourfolio.databinding.ActivityMainBinding
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
+import com.example.flavourfolio.tabs.fridge.FridgeFragment
+import com.example.flavourfolio.tabs.recipes.RecipesFragment
+import com.example.flavourfolio.tabs.steps.StepsFragment
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var recipesFragment: RecipesFragment
+    private lateinit var stepsFragment: StepsFragment
+    private lateinit var fridgeFragment: FridgeFragment
+
+    private lateinit var vpViewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
+    private lateinit var tabConfigurationStrategy: TabConfigurationStrategy
+    private lateinit var tabLayoutMediator: TabLayoutMediator
+
+    private lateinit var mainFragmentStateAdapter: MainFragmentStateAdapter
+    private lateinit var fragments: ArrayList<Fragment>
+    private val tabTitles = arrayOf("Recipes", "Step-By-Step", "Fridge")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        vpViewPager = findViewById(R.id.vpViewPager)
+        tabLayout = findViewById(R.id.tabTab)
 
-        setSupportActionBar(binding.toolbar)
+        initializeFragments()
+        setupTabs()
+    }
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+    private fun setupTabs() {
+        mainFragmentStateAdapter = MainFragmentStateAdapter(this, fragments)
+        vpViewPager.adapter = mainFragmentStateAdapter
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        tabConfigurationStrategy = TabConfigurationStrategy { tab: TabLayout.Tab, pos: Int ->
+            tab.text = tabTitles[pos]
         }
+        tabLayoutMediator = TabLayoutMediator(tabLayout, vpViewPager, tabConfigurationStrategy)
+        tabLayoutMediator.attach()
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+    private fun initializeFragments() {
+        recipesFragment = RecipesFragment()
+        stepsFragment = StepsFragment()
+        fridgeFragment = FridgeFragment()
+
+        fragments = ArrayList()
+        fragments.add(recipesFragment)
+        fragments.add(stepsFragment)
+        fragments.add(fridgeFragment)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tabLayoutMediator.detach()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
 }
