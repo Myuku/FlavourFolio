@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">Flavour Folio</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <!-- Tab Names -->
+    <string name="tab_recipes">Recipes</string>
+    <string name="tab_step_by_step">Step-By-Step</string>
+    <string name="tab_fridge">Fridge</string>
+
+    <!-- Step-by Step String values -->
+    <!-- view -->
+    <string name="sbs_v_step_max_alert">There are no more steps!</string>
+    <string name="sbs_v_step_min_alert">There are no previous steps!</string>
+    <!-- layout -->
+    <string name="sbs_lo_step_counter">STEP\n%1$d</string>
+    <string name="sbs_lo_start_msg">Start by choosing \na Recipe first!</string>
+    <string name="sbs_lo_end_msg">Congratulations!\nYou have finished the dish!</string>
+    <string name="sbs_lo_back_text">BACK</string>
+    <string name="sbs_lo_next_text">NEXT</string>
 </resources>
