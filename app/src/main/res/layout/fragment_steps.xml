@@ -1,21 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tabs.steps.StepsFragment"
-    android:orientation="vertical">
+    tools:context=".tabs.steps.StepsFragment">
 
-    <TextView
-        android:id="@+id/counter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="0" />
-    <Button
-        android:id="@+id/button"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/lineButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Increment" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <ProgressBar
+        android:id="@+id/pbProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:progressDrawable="@drawable/sbs_progress_bar_bg"
+        app:layout_constraintBottom_toTopOf="@+id/line0.05p"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/line0.05p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05"/>
+
+    <ViewFlipper
+        android:id="@+id/vfViewFlipper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/lineButtons"
+        app:layout_constraintTop_toTopOf="@id/line0.05p">
+
+        <!-- First view -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clLowerSection"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sbs_lower_rounded_section"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/line0.30p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.30"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clUpperSection"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/sbs_upper_rounded_section"
+                android:elevation="95dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/line0.30p"
+                app:layout_constraintVertical_bias="1.0"
+                tools:layout_editor_absoluteX="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="Second"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Second View -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clLowerSection2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sbs_lower_rounded_section"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/line0.30p2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.30"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clUpperSection2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/sbs_upper_rounded_section"
+                android:elevation="95dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/line0.30p2"
+                app:layout_constraintVertical_bias="1.0"
+                tools:layout_editor_absoluteX="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="Third"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Third view -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clNoRecipeScreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sbs_lower_rounded_section"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/sbs_lo_start_msg"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Fourth view -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clDoneRecipeScreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/sbs_lower_rounded_section"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/sbs_lo_end_msg"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-</LinearLayout>
+    </ViewFlipper>
+
+    <View
+        android:id="@+id/vwButtonBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/very_light_pink"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lineButtons" />
+
+    <TextView
+        android:id="@+id/tvStepCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sbs_lo_step_counter"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        app:layout_constraintBaseline_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/vwButtonBackground"
+        app:layout_constraintEnd_toStartOf="@+id/btnNextStep"
+        app:layout_constraintStart_toEndOf="@+id/btnPrevStep"
+        app:layout_constraintTop_toTopOf="@+id/lineButtons" />
+
+    <Button
+        android:id="@+id/btnPrevStep"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:letterSpacing="0.2"
+        android:text="@string/sbs_lo_back_text"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnNextStep"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lineButtons" />
+
+    <Button
+        android:id="@+id/btnNextStep"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="25dp"
+        android:backgroundTint="@color/greenish_color"
+        android:letterSpacing="0.2"
+        android:text="@string/sbs_lo_next_text"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lineButtons" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
