@@ -11,10 +11,21 @@
     <!-- view -->
     <string name="sbs_v_step_max_alert">There are no more steps!</string>
     <string name="sbs_v_step_min_alert">There are no previous steps!</string>
+    <string name="sbs_v_timer_running_alert">Timer is already running!</string>
+    <string name="sbs_v_timer_completed_status">FINISHED</string>
     <!-- layout -->
     <string name="sbs_lo_step_counter">STEP\n%1$d</string>
     <string name="sbs_lo_start_msg">Start by choosing \na Recipe first!</string>
     <string name="sbs_lo_end_msg">Congratulations!\nYou have finished the dish!</string>
     <string name="sbs_lo_back_text">BACK</string>
     <string name="sbs_lo_next_text">NEXT</string>
+    <string name="sbs_lo_timer_stop">STOP</string>
+    <string name="sbs_lo_timer_start">START</string>
+    <string name="sbs_lo_timer_default">00 : 00 : 00</string>
+    <string name="sbs_lo_timer_title">TIMER</string>
+    <!-- service -->
+    <string name="sbs_sv_notif_title">FlavourFolio Timer</string>
+    <string name="sbs_sv_notif_context">Click to return to timer</string>
+
+
 </resources>

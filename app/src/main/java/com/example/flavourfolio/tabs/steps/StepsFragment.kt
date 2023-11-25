@@ -1,5 +1,12 @@
 package com.example.flavourfolio.tabs.steps
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,13 +15,14 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.ViewFlipper
+import androidx.constraintlayout.widget.Guideline
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
+import com.example.flavourfolio.service.TimerService
 import com.google.android.material.snackbar.Snackbar
-
 
 class StepsFragment : Fragment() {
 
@@ -29,8 +37,16 @@ class StepsFragment : Fragment() {
     private lateinit var viewModel: StepsViewModel
     // View elements
     private lateinit var vfViewFlipper: ViewFlipper
-    private lateinit var tvCurrentStep: TextView
     private lateinit var pbProgressBar: ProgressBar
+    private lateinit var tvCurrentStep: TextView
+    private lateinit var aboveButtons: Guideline
+    // Timer View elements
+    private lateinit var tvTimer: TextView
+    private lateinit var btnStartTimer: Button
+    private lateinit var btnStopTimer: Button
+    // Timer Components
+    private lateinit var timerReceiver: BroadcastReceiver
+    private var timerRunning: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,9 +58,29 @@ class StepsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        timerReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                updateTimerUI(intent)
+            }
+        }
         initializeViews(view)
         initializeButtons(view)
+        initializeTimer(view)
+    }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR), Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR))
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireActivity().unregisterReceiver(timerReceiver)
     }
 
     private fun initializeViews(view: View) {
@@ -60,6 +96,23 @@ class StepsFragment : Fragment() {
         // Initialize current step
         tvCurrentStep = view.findViewById(R.id.tvStepCounter)
         tvCurrentStep.text = resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
+
+        // Initialize line at which snack-bar is toasted
+        aboveButtons = view.findViewById(R.id.lineButtons)
+    }
+
+    private fun initializeTimer(view: View) {
+        tvTimer = view.findViewById(R.id.tvTimer)
+
+        btnStartTimer = view.findViewById(R.id.btnStartTimer)
+        btnStartTimer.setOnClickListener {
+            startTimer(viewModel.recipeTimer)
+        }
+
+        btnStopTimer = view.findViewById(R.id.btnStopTimer)
+        btnStopTimer.setOnClickListener {
+            cancelTimer()
+        }
     }
 
     private fun initializeButtons(view: View) {
@@ -69,7 +122,7 @@ class StepsFragment : Fragment() {
                 val snack = Snackbar.make(
                     view, getString(R.string.sbs_v_step_max_alert), MainActivity.LENGTH_VERY_SHORT
                 )
-                snack.anchorView = view.findViewById(R.id.lineButtons)
+                snack.anchorView = aboveButtons
                 snack.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_pink))
                 snack.show()
             } else {
@@ -86,7 +139,7 @@ class StepsFragment : Fragment() {
                 val snack = Snackbar.make(
                     view, getString(R.string.sbs_v_step_min_alert), MainActivity.LENGTH_VERY_SHORT
                 )
-                snack.anchorView = view.findViewById(R.id.lineButtons)
+                snack.anchorView = aboveButtons
                 snack.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_pink))
                 snack.show()
             } else {
@@ -97,7 +150,6 @@ class StepsFragment : Fragment() {
             }
         }
     }
-
 
     // TODO: these two are only for testing, will only use showView()
     private fun nextView() {
@@ -111,7 +163,7 @@ class StepsFragment : Fragment() {
         vfViewFlipper.showPrevious()
     }
     // Everything in here will be put into nextView and prevView with (idx: Int)
-    fun showView(type: ViewState) {
+    private fun showView(type: ViewState) {
         when (type) {
             ViewState.PICTURE -> vfViewFlipper.displayedChild = ViewState.PICTURE.idx
             ViewState.TIMER -> vfViewFlipper.displayedChild = ViewState.TIMER.idx
@@ -119,5 +171,61 @@ class StepsFragment : Fragment() {
             ViewState.DONE -> vfViewFlipper.displayedChild = ViewState.DONE.idx
         }
     }
+
+    private fun startTimer(duration: Long) {
+        // Prompt an error message if they try to start a timer when there already is one
+        if (timerRunning) {
+            val snack = Snackbar.make(
+                requireView(),
+                getString(R.string.sbs_v_timer_running_alert), MainActivity.LENGTH_VERY_SHORT
+            )
+            snack.anchorView = aboveButtons
+            snack.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_pink))
+            snack.show()
+            return
+        }
+        // Reset colors back to normal
+        tvTimer.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_pink))
+        tvTimer.alpha = 1.0f
+        btnStopTimer.isClickable = true
+        btnStopTimer.alpha = 1.0f
+        // Start service
+        val intent = Intent(requireContext(), TimerService::class.java)
+        intent.putExtra(TimerService.DURATION_KEY, duration)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireActivity().startForegroundService(intent)
+        } else {
+            requireContext().startService(intent)
+        }
+    }
+
+    private fun cancelTimer() {
+        val intent = Intent(requireContext(), TimerService::class.java)
+        requireContext().stopService(intent)
+        // Gray out button and text when pressed
+        tvTimer.setTextColor(Color.GRAY)
+        tvTimer.alpha = 0.5f
+        btnStopTimer.alpha = 0.5f
+        btnStopTimer.isClickable = false
+    }
+
+    private fun updateTimerUI(intent: Intent) {
+        if (intent.extras != null) {
+            val millisUntilFinished = intent.getLongExtra(TimerService.TIME_KEY, 0)
+            val seconds = millisUntilFinished / 1000 % 60
+            val minutes = millisUntilFinished / (1000 * 60) % 60
+            val hours = millisUntilFinished / (1000 * 60 * 60) % 60
+
+            tvTimer.text = String.format("%02d : %02d : %02d", hours, minutes, seconds)
+
+            timerRunning = intent.getBooleanExtra(TimerService.RUNNING_KEY, false)
+            val timerFinished = intent.getBooleanExtra(TimerService.FINISHED_KEY, false)
+            if (timerFinished) {
+                tvTimer.text = getString(R.string.sbs_v_timer_completed_status)
+            }
+        }
+    }
+
+
 
 }
