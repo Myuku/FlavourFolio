@@ -31,9 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainFragmentStateAdapter: MainFragmentStateAdapter
     private lateinit var fragments: ArrayList<Fragment>
-    private val tabTitles = arrayOf(getString(R.string.tab_recipes),
-        getString(R.string.tab_step_by_step), getString(R.string.tab_fridge))
-
+    private lateinit var tabTitles: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             supportActionBar?.hide()
         }
+        
+        tabTitles = arrayOf(getString(R.string.tab_recipes),
+        getString(R.string.tab_step_by_step), getString(R.string.tab_fridge))
         vpViewPager = findViewById(R.id.vpViewPager)
         tabLayout = findViewById(R.id.tabTab)
 
