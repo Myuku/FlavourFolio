@@ -69,8 +69,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="10dp">
 
-        <ListView
-            android:id="@+id/recipes_desserts_listview"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipes_desserts_recyclerview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -99,8 +99,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="10dp">
 
-        <ListView
-            android:id="@+id/recipes_dinners_listview"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipes_dinner_recyclerview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -129,8 +129,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="10dp">
 
-        <ListView
-            android:id="@+id/recipes_breakfast_listview"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipes_breakfast_recyclerview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -159,8 +159,8 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="10dp">
 
-        <ListView
-            android:id="@+id/recipes_lunch_listview"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipes_lunch_recyclerview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"

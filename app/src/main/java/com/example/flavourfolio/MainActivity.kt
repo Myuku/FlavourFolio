@@ -1,11 +1,17 @@
 package com.example.flavourfolio
 
+import androidx.room.Room
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.example.flavourfolio.database.AppDatabase
+import com.example.flavourfolio.database.Recipe
 import com.example.flavourfolio.tabs.fridge.FridgeFragment
 import com.example.flavourfolio.tabs.recipes.RecipesFragment
 import com.example.flavourfolio.tabs.steps.StepsFragment
@@ -15,6 +21,8 @@ import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrate
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var database: AppDatabase // Declare database instance
 
     companion object {
         const val LENGTH_VERY_SHORT = 1000
@@ -38,6 +46,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             supportActionBar?.hide()
+        }
+
+        // Initialize Room database
+        database = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "database"
+        ).build()
+
+        // Access the database using DAOs
+        val recipeDao = database.recipeDao
+
+        // TEST: Inserting a recipe using coroutines
+        val recipe = Recipe(name = "Pancakes", image = null, type = "Breakfast")
+        GlobalScope.launch(Dispatchers.IO) {
+            recipeDao.insert(recipe)
         }
         
         tabTitles = arrayOf(getString(R.string.tab_recipes),
