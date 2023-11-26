@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -22,7 +24,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
 import com.example.flavourfolio.service.TimerService
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.URL
+import kotlin.math.floor
+
 
 class StepsFragment : Fragment() {
 
@@ -40,6 +51,7 @@ class StepsFragment : Fragment() {
     private lateinit var pbProgressBar: ProgressBar
     private lateinit var tvCurrentStep: TextView
     private lateinit var aboveButtons: Guideline
+    private lateinit var ivWebImage: ShapeableImageView
     // Timer View elements
     private lateinit var tvTimer: TextView
     private lateinit var btnStartTimer: Button
@@ -66,6 +78,7 @@ class StepsFragment : Fragment() {
         initializeViews(view)
         initializeButtons(view)
         initializeTimer(view)
+        initializeImage(view)
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -147,6 +160,32 @@ class StepsFragment : Fragment() {
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
                     resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
+            }
+        }
+    }
+
+    private fun initializeImage(view: View) {
+        ivWebImage = view.findViewById(R.id.ivWebImage)
+
+        CoroutineScope(IO).launch {
+            val imageString = ImageRetriever.retrieveImageLink("${viewModel.action}ing ${viewModel.subject}")
+            val url = URL(imageString)
+            val img = BitmapFactory.decodeStream(withContext(IO) {
+                url.openConnection().getInputStream()
+            })
+            withContext(Main) {
+                // Scale up image to fit properly
+                val currentBitmapWidth = img.width
+                val currentBitmapHeight = img.height
+                val ivWidth = 155
+
+                val newHeight =
+                    floor(currentBitmapHeight.toDouble() *
+                            (ivWidth.toDouble() / currentBitmapWidth.toDouble())).toInt()
+
+                val scaledImg = Bitmap.createScaledBitmap(img, ivWidth, newHeight, true)
+
+                ivWebImage.setImageBitmap(scaledImg)
             }
         }
     }
