@@ -24,7 +24,7 @@
     <string name="sbs_lo_timer_default">00 : 00 : 00</string>
     <string name="sbs_lo_timer_title">TIMER</string>
     <!-- service -->
-    <string name="sbs_sv_notif_title">FlavourFolio Timer</string>
+    <string name="sbs_sv_notif_title">Cooking Timer</string>
     <string name="sbs_sv_notif_context">Click to return to timer</string>
 
 
