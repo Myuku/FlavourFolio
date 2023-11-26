@@ -264,7 +264,4 @@ class StepsFragment : Fragment() {
             }
         }
     }
-
-
-
 }

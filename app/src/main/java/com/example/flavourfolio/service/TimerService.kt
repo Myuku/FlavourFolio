@@ -11,8 +11,8 @@ import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
-import com.example.flavourfolio.tabs.steps.StepsFragment
 
 
 class TimerService : Service() {
@@ -69,7 +69,7 @@ class TimerService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val notificationIntent = Intent(this, StepsFragment::class.java)
+        val notificationIntent = Intent(this, MainActivity::class.java)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent,
@@ -83,7 +83,7 @@ class TimerService : Service() {
         if (Build.VERSION.SDK_INT >= 26) {
             val notificationChannel = NotificationChannel(
                 CHANNEL_ID,
-                "channel_name",
+                "Cooking Timer",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(notificationChannel)
