@@ -11,6 +11,7 @@ import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
 import java.util.Locale
@@ -102,7 +103,7 @@ class TimerService : Service() {
         notificationBuilder = NotificationCompat.Builder(
             this,
             CHANNEL_ID
-        )
+        ).setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= 26) {
             val notificationChannel = NotificationChannel(
