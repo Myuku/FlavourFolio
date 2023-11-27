@@ -43,7 +43,9 @@ interface StepDao {
     @Query("SELECT EXISTS(SELECT * FROM recipes_table WHERE recipe_id = :recipeId)")
     suspend fun isRecipeExist(recipeId: Int): Boolean
 
-    @Query("SELECT * FROM steps_table WHERE recipe_id = :recipeId")
+    @Query("SELECT COUNT(*) FROM steps_table WHERE recipe_id = :recipeId")
+    suspend fun length(recipeId: Int): Int
+    @Query("SELECT * FROM steps_table WHERE recipe_id = :recipeId ORDER BY step")
     fun getStepsForRecipe(recipeId: Int): Flow<List<Step>>
     // Add other required queries
 

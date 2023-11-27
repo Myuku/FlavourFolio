@@ -5,8 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 class StepRepository(private val stepDao: StepDao) {
     @WorkerThread
-    fun retrieveSteps(rid: Int): Flow<List<Step>> {
-        return stepDao.getStepsForRecipe(rid)
+    suspend fun retrieveSteps(rid: Int): Flow<List<Step>>? {
+        if (stepDao.isRecipeExist(rid)) {
+            return stepDao.getStepsForRecipe(rid)
+        }
+        return null
     }
 
     @WorkerThread
@@ -18,6 +21,12 @@ class StepRepository(private val stepDao: StepDao) {
             1
         }
     }
+
+    @WorkerThread
+    suspend fun length(rid: Int): Int {
+        return stepDao.length(rid)
+    }
+
 
     @WorkerThread
     suspend fun deleteStep(sid: Int) {
