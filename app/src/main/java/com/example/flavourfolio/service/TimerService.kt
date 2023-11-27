@@ -11,8 +11,12 @@ import android.os.CountDownTimer
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
+import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
-import com.example.flavourfolio.tabs.steps.StepsFragment
+import java.util.Locale
+import kotlin.Int
+import kotlin.Long
 
 
 class TimerService : Service() {
@@ -30,12 +34,13 @@ class TimerService : Service() {
 
     private lateinit var countDownTimer: CountDownTimer
     private lateinit var notificationManager: NotificationManager
+    private lateinit var notificationBuilder: NotificationCompat.Builder
     private var broadcastIntent = Intent(COUNTDOWN_BR)
 
     override fun onCreate() {
         super.onCreate()
         val notification = createNotification()
-        startForeground(1, notification)
+        startForeground(1337, notification)
     }
 
     override fun onDestroy() {
@@ -54,6 +59,7 @@ class TimerService : Service() {
                 broadcastIntent.putExtra(TIME_KEY, millisUntilFinished)
                 broadcastIntent.putExtra(RUNNING_KEY, true)
                 broadcastIntent.putExtra(FINISHED_KEY, false)
+                updateNotification(millisUntilFinished)
                 sendBroadcast(broadcastIntent)
             }
 
@@ -68,23 +74,42 @@ class TimerService : Service() {
         return START_NOT_STICKY
     }
 
+    private fun updateNotification(duration: Long) {
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        var numMessages = 0
+
+        val seconds = duration / 1000 % 60
+        val minutes = duration / (1000 * 60) % 60
+        val hours = duration / (1000 * 60 * 60) % 60
+        val time = String.format(Locale.getDefault(), "%02d : %02d : %02d", hours, minutes, seconds)
+
+        notificationBuilder
+            .setContentText(time)
+            .setNumber(++numMessages)
+
+        notificationManager.notify(
+            1337,  // <-- Place your notification id here
+            notificationBuilder.build()
+        )
+    }
+
     private fun createNotification(): Notification {
-        val notificationIntent = Intent(this, StepsFragment::class.java)
+        val notificationIntent = Intent(this, MainActivity::class.java)
         notificationIntent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(
+        notificationBuilder = NotificationCompat.Builder(
             this,
             CHANNEL_ID
-        )
+        ).setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= 26) {
             val notificationChannel = NotificationChannel(
                 CHANNEL_ID,
-                "channel_name",
-                NotificationManager.IMPORTANCE_DEFAULT
+                "Cooking Timer",
+                NotificationManager.IMPORTANCE_LOW
             )
             notificationManager.createNotificationChannel(notificationChannel)
         }

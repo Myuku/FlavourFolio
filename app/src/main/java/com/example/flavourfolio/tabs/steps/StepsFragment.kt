@@ -52,6 +52,8 @@ class StepsFragment : Fragment() {
     private lateinit var tvCurrentStep: TextView
     private lateinit var aboveButtons: Guideline
     private lateinit var ivWebImage: ShapeableImageView
+    private lateinit var btnNextStep: Button
+    private lateinit var btnPrevStep: Button
     // Timer View elements
     private lateinit var tvTimer: TextView
     private lateinit var btnStartTimer: Button
@@ -129,8 +131,13 @@ class StepsFragment : Fragment() {
     }
 
     private fun initializeButtons(view: View) {
-        val btnNextStep: Button = view.findViewById(R.id.btnNextStep)
+        btnNextStep = view.findViewById(R.id.btnNextStep)
+        btnPrevStep = view.findViewById(R.id.btnPrevStep)
+
         btnNextStep.setOnClickListener {
+            if (viewModel.currProgress == viewModel.maxSteps - 1) {
+                btnNextStep.alpha = 0.5f
+            }
             if (viewModel.incrementStep() == 1) {
                 val snack = Snackbar.make(
                     view, getString(R.string.sbs_v_step_max_alert), MainActivity.LENGTH_VERY_SHORT
@@ -140,14 +147,17 @@ class StepsFragment : Fragment() {
                 snack.show()
             } else {
                 nextView()
+                btnPrevStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
                     resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
             }
         }
 
-        val btnPrevStep: Button = view.findViewById(R.id.btnPrevStep)
         btnPrevStep.setOnClickListener {
+            if (viewModel.currProgress == 2) {
+                btnPrevStep.alpha = 0.5f
+            }
             if (viewModel.decrementStep() == 1) {
                 val snack = Snackbar.make(
                     view, getString(R.string.sbs_v_step_min_alert), MainActivity.LENGTH_VERY_SHORT
@@ -157,6 +167,7 @@ class StepsFragment : Fragment() {
                 snack.show()
             } else {
                 prevView()
+                btnNextStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
                     resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
@@ -264,7 +275,4 @@ class StepsFragment : Fragment() {
             }
         }
     }
-
-
-
 }
