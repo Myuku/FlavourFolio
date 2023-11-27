@@ -4,10 +4,15 @@ import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.flavourfolio.database.AppDatabase
@@ -18,7 +23,6 @@ import com.example.flavourfolio.tabs.steps.StepsFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             supportActionBar?.hide()
         }
+        requestPermissions()
 
         // Initialize Room database
         database = Room.databaseBuilder(
@@ -63,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             recipeDao.insert(recipe)
         }
-        
+
         tabTitles = arrayOf(getString(R.string.tab_recipes),
         getString(R.string.tab_step_by_step), getString(R.string.tab_fridge))
         vpViewPager = findViewById(R.id.vpViewPager)
@@ -105,4 +110,31 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+
+    private fun requestPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE)
+            != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+            != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.FOREGROUND_SERVICE,
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        Manifest.permission.INTERNET),
+                    0
+                )
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.INTERNET),
+                    0
+                )
+            }
+        }
+    }
 }

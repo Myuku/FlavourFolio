@@ -11,6 +11,10 @@ class StepsViewModel : ViewModel() {
         private set
     var recipeTimer: Long = TimeUnit.MINUTES.toMillis(10)
         private set
+    var action = "fry"
+        private set
+    var subject = "tomato"
+        private set
 
 
     fun incrementStep(): Int {

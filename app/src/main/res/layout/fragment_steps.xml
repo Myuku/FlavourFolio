@@ -69,7 +69,7 @@
                 tools:layout_editor_absoluteX="37dp">
 
                 <View
-                    android:id="@+id/divider"
+                    android:id="@+id/vwTimerBody"
                     android:layout_width="match_parent"
                     android:layout_height="170dp"
                     android:layout_margin="16dp"
@@ -88,11 +88,11 @@
                     android:textColor="@color/pink"
                     android:textSize="36sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/divider"
+                    app:layout_constraintBottom_toTopOf="@+id/vwTimerBody"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.076"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/divider"
+                    app:layout_constraintTop_toTopOf="@+id/vwTimerBody"
                     app:layout_constraintVertical_bias="0.333" />
 
                 <TextView
@@ -101,24 +101,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="28dp"
                     android:text="@string/sbs_lo_timer_default"
-                    android:textColor="@color/dark_pink"
                     android:textAlignment="center"
+                    android:textColor="@color/dark_pink"
                     android:textSize="40sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@+id/divider"
+                    app:layout_constraintBottom_toBottomOf="@+id/vwTimerBody"
                     app:layout_constraintEnd_toStartOf="@+id/btnStopTimer"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/divider"
+                    app:layout_constraintTop_toTopOf="@+id/vwTimerBody"
                     app:layout_constraintVertical_bias="0.504" />
 
                 <Button
                     android:id="@+id/btnStartTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sbs_lo_timer_start"
-                    android:backgroundTint="@color/dark_pink"
                     android:layout_marginBottom="10dp"
+                    android:backgroundTint="@color/dark_pink"
+                    android:text="@string/sbs_lo_timer_start"
                     app:layout_constraintBottom_toTopOf="@+id/btnStopTimer"
                     app:layout_constraintEnd_toEndOf="@+id/btnStopTimer"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -131,11 +131,23 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="32dp"
                     android:text="@string/sbs_lo_timer_stop"
-                    app:layout_constraintBottom_toBottomOf="@+id/divider"
-                    app:layout_constraintEnd_toEndOf="@+id/divider" />
+                    app:layout_constraintBottom_toBottomOf="@+id/vwTimerBody"
+                    app:layout_constraintEnd_toEndOf="@+id/vwTimerBody" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivWebImage"
+                    android:layout_width="155dp"
+                    android:layout_height="155dp"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+                    app:layout_constraintBottom_toTopOf="@+id/vwTimerBody"
+                    app:layout_constraintEnd_toEndOf="@+id/vwTimerBody"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/avatars" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Second View -->
@@ -249,6 +261,7 @@
         android:letterSpacing="0.2"
         android:text="@string/sbs_lo_back_text"
         android:textColor="@color/white"
+        android:alpha="0.5"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnNextStep"
