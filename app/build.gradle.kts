@@ -49,6 +49,7 @@ dependencies {
     // Room Database
     implementation("androidx.room:room-ktx:2.6.0")
     ksp("androidx.room:room-compiler:2.6.0")
+    implementation("it.xabaras.android:recyclerview-swipedecorator:1.4")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

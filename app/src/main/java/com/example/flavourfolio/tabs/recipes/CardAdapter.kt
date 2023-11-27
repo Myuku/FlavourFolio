@@ -1,7 +1,5 @@
 package com.example.flavourfolio.tabs.recipes
 
-import android.content.Context
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,36 +9,43 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.flavourfolio.R
 import com.example.flavourfolio.database.Recipe
 
-class CardAdapter(private var recipeList: List<Recipe>) :
+
+class CardAdapter (list: List<Recipe>) :
     RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 
+
+    private var recipeList: List<Recipe> = list
+    var onItemClick : ((Recipe) -> Unit) ?= null
     override fun getItemCount(): Int = recipeList.size
+
+    fun replace(newList: List<Recipe>){
+        recipeList = newList
+    }
 
     // Make changes here if we are adding new elements to the view
     // or if we want to set up listeners
     inner class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val titleString = itemView.findViewById(R.id.recipe_card_title) as TextView
-        val typeString = itemView.findViewById(R.id.recipe_card_type_text) as TextView
-        val thumbnail = itemView.findViewById(R.id.recipe_card_image) as ImageView
+        private val titleString: TextView = itemView.findViewById(R.id.recipe_card_title)
+        private val typeString: TextView = itemView.findViewById(R.id.recipe_card_type_text)
+        private val thumbnail: ImageView = itemView.findViewById(R.id.recipe_card_image)
 
         // create a bind function to update the views with card data
          fun bind(recipe: Recipe) {
             titleString.text = recipe.name
-            typeString.text = recipe.type
-            val bitmap = recipe.image.let {
-                it?.let { it1 -> BitmapFactory.decodeByteArray(recipe.image, 0, it1.size) }
+            typeString.text = recipe.type.toString()
+            if (recipe.image != null) {
+                thumbnail.setImageBitmap(recipe.image)
             }
-            thumbnail.setImageBitmap(bitmap)
          }
 
-//        init {
+        init {
 //            // Set long click listener on the itemView
 //            itemView.setOnLongClickListener {
 //                // Handle long click, open a dialog or bottom sheet to replace the card
 //                // Show the list of cards for replacement
 //                true
 //            }
-//        }
+        }
 
     }
 
@@ -64,7 +69,8 @@ class CardAdapter(private var recipeList: List<Recipe>) :
 //        holder.thumbnail.setImageBitmap(bitmap)
         val recipe = recipeList[position]
         holder.bind(recipe)
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(recipe)
+        }
     }
-
-
 }

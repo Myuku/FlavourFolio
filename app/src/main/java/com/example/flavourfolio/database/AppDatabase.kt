@@ -4,13 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
-@Database(entities = [Recipe::class, Step::class, Detail::class], version = 1)
+@Database(entities = [Recipe::class, Step::class, Action::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val recipeDao: RecipeDao
     abstract val stepDao: StepDao
-    abstract val detailDao: DetailDao
+    abstract val actionDao: ActionDao
 
 
     companion object{

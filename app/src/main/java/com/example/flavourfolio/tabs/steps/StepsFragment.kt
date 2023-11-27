@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
+import com.example.flavourfolio.enums.StepViewState
 import com.example.flavourfolio.service.TimerService
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
@@ -34,16 +35,8 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 import kotlin.math.floor
 
-
 class StepsFragment : Fragment() {
 
-    // Enum to make it easier to know what state is being used
-    enum class ViewState(val idx: Int) {
-        PICTURE(0),
-        TIMER(1),
-        START(2),
-        DONE(3),
-    }
     // View Model
     private lateinit var viewModel: StepsViewModel
     // View elements
@@ -62,6 +55,10 @@ class StepsFragment : Fragment() {
     private lateinit var timerReceiver: BroadcastReceiver
     private var timerRunning: Boolean = false
 
+
+    private var recipeId = 0
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,8 +76,17 @@ class StepsFragment : Fragment() {
         }
         initializeViews(view)
         initializeButtons(view)
+
         initializeTimer(view)
         initializeImage(view)
+    }
+
+    private fun getPassedValue() {
+        val sharedPref =  activity?.getSharedPreferences(
+            "recipe passing",
+            Context.MODE_PRIVATE
+        ) ?: return
+        recipeId = sharedPref.getInt("recipe_id_key", 0)
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -91,6 +97,7 @@ class StepsFragment : Fragment() {
         } else {
             requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR))
         }
+        getPassedValue()
     }
 
     override fun onPause() {
@@ -101,7 +108,7 @@ class StepsFragment : Fragment() {
     private fun initializeViews(view: View) {
         // Initialize view flipper
         vfViewFlipper = view.findViewById(R.id.vfViewFlipper)
-        vfViewFlipper.displayedChild = ViewState.START.ordinal
+        vfViewFlipper.displayedChild = StepViewState.START.idx
 
         // Initialize progress bar
         pbProgressBar = view.findViewById(R.id.pbProgressBar)
@@ -213,12 +220,12 @@ class StepsFragment : Fragment() {
         vfViewFlipper.showPrevious()
     }
     // Everything in here will be put into nextView and prevView with (idx: Int)
-    private fun showView(type: ViewState) {
+    private fun showView(type: StepViewState) {
         when (type) {
-            ViewState.PICTURE -> vfViewFlipper.displayedChild = ViewState.PICTURE.idx
-            ViewState.TIMER -> vfViewFlipper.displayedChild = ViewState.TIMER.idx
-            ViewState.START -> vfViewFlipper.displayedChild = ViewState.START.idx
-            ViewState.DONE -> vfViewFlipper.displayedChild = ViewState.DONE.idx
+            StepViewState.PICTURE -> vfViewFlipper.displayedChild = StepViewState.PICTURE.idx
+            StepViewState.TIMER -> vfViewFlipper.displayedChild = StepViewState.TIMER.idx
+            StepViewState.START -> vfViewFlipper.displayedChild = StepViewState.START.idx
+            StepViewState.DONE -> vfViewFlipper.displayedChild = StepViewState.DONE.idx
         }
     }
 

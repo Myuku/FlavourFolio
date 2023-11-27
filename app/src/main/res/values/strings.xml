@@ -27,5 +27,19 @@
     <string name="sbs_sv_notif_title">Cooking Timer</string>
     <string name="sbs_sv_notif_context">Click to return to timer</string>
 
+    <!-- Recipes String values -->
+    <!-- layout -->
+    <string name="recipes_header_dessert">Desserts</string>
+    <string name="recipes_header_dinner">Dinner</string>
+    <string name="recipes_header_breakfast">Breakfast</string>
+    <string name="recipes_header_lunch">Lunch</string>
+    <string name="recipes_header_sort_by">Sort by:</string>
+    <string name="recipes_remove_message">Item was removed from the list.</string>
+    <string name="recipes_undo">UNDO</string>
+    <!-- card -->
+    <string name="recipe_card_image_context">Recipe Image</string>
+    <string name="recipe_card_key_ingredients_title">Key Ingredients</string>
+    <string name="recipe_card_type_title_placeholder">Type</string>
+    <string name="recipe_card_title_placeholder">Title</string>
 
 </resources>
