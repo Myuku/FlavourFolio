@@ -4,5 +4,5 @@ data class CardModel(
     val title: String,
     val type: String,
     val ingredientsList: ArrayList<String>,
-    val imageResId: Int // Drawable resource id
+    val imageByteArray: ByteArray
 )
