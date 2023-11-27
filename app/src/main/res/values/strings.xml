@@ -28,14 +28,15 @@
     <string name="sbs_sv_notif_context">Click to return to timer</string>
 
     <!-- Recipes String values -->
+    <!-- view -->
+    <string name="recipe_v_remove_message">Item was removed from the list.</string>
+    <string name="recipe_v_undo">UNDO</string>
     <!-- layout -->
-    <string name="recipes_header_dessert">Desserts</string>
-    <string name="recipes_header_dinner">Dinner</string>
-    <string name="recipes_header_breakfast">Breakfast</string>
-    <string name="recipes_header_lunch">Lunch</string>
-    <string name="recipes_header_sort_by">Sort by:</string>
-    <string name="recipes_remove_message">Item was removed from the list.</string>
-    <string name="recipes_undo">UNDO</string>
+    <string name="recipe_header_dessert">Desserts</string>
+    <string name="recipe_header_dinner">Dinner</string>
+    <string name="recipe_header_breakfast">Breakfast</string>
+    <string name="recipe_header_lunch">Lunch</string>
+    <string name="recipe_header_sort_by">Sort by:</string>
     <!-- card -->
     <string name="recipe_card_image_context">Recipe Image</string>
     <string name="recipe_card_key_ingredients_title">Key Ingredients</string>

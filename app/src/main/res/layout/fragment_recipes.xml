@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/recipes_header_sort_by"
+            android:text="@string/recipe_header_sort_by"
             android:textStyle="bold"
             android:layout_marginStart="20dp"
             app:layout_constraintBottom_toBottomOf="@+id/spnrSortBy"
@@ -92,7 +92,7 @@
                 android:id="@+id/desserts_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recipes_header_dessert"
+                android:text="@string/recipe_header_dessert"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
                 android:textSize="25sp"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/recipes_header_dinner"
+                android:text="@string/recipe_header_dinner"
                 android:textSize="25sp"
                 android:textStyle="bold"/>
             <androidx.recyclerview.widget.RecyclerView
@@ -126,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/recipes_header_breakfast"
+                android:text="@string/recipe_header_breakfast"
                 android:textSize="25sp"
                 android:textStyle="bold"/>
             <androidx.recyclerview.widget.RecyclerView
@@ -142,7 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:text="@string/recipes_header_lunch"
+                android:text="@string/recipe_header_lunch"
                 android:textSize="25sp"
                 android:textStyle="bold"/>
             <androidx.recyclerview.widget.RecyclerView

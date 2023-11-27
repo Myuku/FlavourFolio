@@ -21,12 +21,12 @@ class RecipesViewModel(private val recipeRepository: RecipeRepository,
     val breakfastLiveData: LiveData<List<Recipe>> = recipeRepository.breakfastRecipes.asLiveData()
     val lunchLiveData: LiveData<List<Recipe>> = recipeRepository.lunchRecipes.asLiveData()
 
+    // For testing
     lateinit var currentSteps: LiveData<List<Step>>
 
     fun insert(recipe: Recipe) = viewModelScope.launch {
         recipeRepository.insert(recipe)
     }
-
 
     fun deleteDessertAt(position: Int) = viewModelScope.launch {
         val dessertList = dessertsLiveData.value
@@ -57,7 +57,7 @@ class RecipesViewModel(private val recipeRepository: RecipeRepository,
         }
     }
 
-
+    // This is really just for testing, wont be needing it anymore
     fun getDessertStepsFor(position: Int) = viewModelScope.launch {
         val dessertList = dessertsLiveData.value
         if (!dessertList.isNullOrEmpty()){

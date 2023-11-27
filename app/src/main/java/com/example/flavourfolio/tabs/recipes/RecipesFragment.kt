@@ -56,7 +56,9 @@ class RecipesFragment : Fragment() {
         fabAddRecipe.setOnClickListener {
             // val intent = Intent(requireContext(), AddRecipeActivity::class.java)
             // startActivity(intent)
-            Log.d("myu", "inserting pancakes")
+
+            // Testing
+            Log.d("myu", "inserting Steak")
             val recipe = Recipe(name = "Steak", type = RecipeType.DINNER)
             viewModel.insert(recipe)
         }
@@ -89,10 +91,10 @@ class RecipesFragment : Fragment() {
                 }
                 val snackBar = Snackbar.make(
                         view,
-                    getString(R.string.recipes_remove_message),
+                    getString(R.string.recipe_v_remove_message),
                         Snackbar.LENGTH_LONG
                     )
-                snackBar.setAction(getString(R.string.recipes_undo)) {
+                snackBar.setAction(getString(R.string.recipe_v_undo)) {
                     viewModel.insert(item!!)
                 }
                 snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.greenish_color))
