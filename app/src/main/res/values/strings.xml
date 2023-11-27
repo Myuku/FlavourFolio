@@ -27,5 +27,14 @@
     <string name="sbs_sv_notif_title">Cooking Timer</string>
     <string name="sbs_sv_notif_context">Click to return to timer</string>
 
+    <!-- Fridge String values -->
+    <string name="fridge_ingredient_hint">eg. Milk</string>
+    <string name="fridge_unit_hint">eg. Gallons</string>
+    <string name="fridge_quantity_hint">eg. 11</string>
+
+    <string name="fridge_ingredient_text">Ingredient</string>
+    <string name="fridge_unit_text">Unit</string>
+    <string name="fridge_quantity_text">Quantity</string>
+
 
 </resources>
