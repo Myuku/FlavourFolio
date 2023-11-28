@@ -12,20 +12,19 @@ import android.view.View.IMPORTANT_FOR_AUTOFILL_NO
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TableLayout
 import android.widget.TableRow
-import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.flavourfolio.R
-import com.google.android.material.tabs.TabLayout.Tab
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.RandomAccessFile
 
 
 class FridgeFragment : Fragment() {
@@ -35,7 +34,6 @@ class FridgeFragment : Fragment() {
     }
 
     private lateinit var viewModel: FridgeViewModel
-    private var color = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,10 +45,6 @@ class FridgeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(FridgeViewModel::class.java)
-
-        viewModel.color.observe(requireActivity()) {
-            color = it
-        }
 
         val csvFileName = "fridge.csv"
         val csvFile = File(requireActivity().getExternalFilesDir(null), csvFileName)
@@ -73,20 +67,16 @@ class FridgeFragment : Fragment() {
         // write to csv when any EditText widget is changed
         val editTextList = ArrayList<EditText>()
         val tableRowList = ArrayList<TableRow>()
-        fun updateEditTextList() {
-            for (i in 0..< tableLayout.childCount) {
-                val child = tableLayout.getChildAt(i)
-                if (child is TableRow) {
-                    tableRowList.add(child)
-                }
-            }
-
-            for (i in 0..<tableRowList.size) {
-                val tr = tableRowList[i]
-                for (i in 0..<tr.childCount) {
-                    val child = tr.getChildAt(i)
-                    if (child is EditText) {
-                        editTextList.add(child)
+        fun updateElementLists() {
+            for (i in 0 ..<tableLayout.childCount) {
+                val tableRow = tableLayout.getChildAt(i)
+                if (tableRow is TableRow) {
+                    tableRowList.add(tableRow)
+                    for (j in 0..<tableRow.childCount) {
+                        val child = tableRow.getChildAt(j)
+                        if (child is EditText) {
+                            editTextList.add(child)
+                        }
                     }
                 }
             }
@@ -108,14 +98,41 @@ class FridgeFragment : Fragment() {
                 })
             }
         }
-        updateEditTextList()
+        updateElementLists()
 
         val addRowBtn = view.findViewById<Button>(R.id.fridge_add_row_button)
         addRowBtn.setOnClickListener {
+            FileOutputStream(csvFile, true).writeCsv("", "", "")
             addTableRow(tableLayout, null)
             editTextList.clear()
             tableRowList.clear()
-            updateEditTextList()
+            updateElementLists()
+        }
+
+        val delRowBtn = view.findViewById<Button>(R.id.fridge_del_row_button)
+        delRowBtn.setOnClickListener {
+            if (tableRowList.size > 1) {
+                tableLayout.removeView(tableRowList[tableRowList.size - 1])
+                tableRowList.removeLast()
+                viewModel.changeColor()
+
+                val f = RandomAccessFile(csvFile, "rw")
+                var b: Byte = 0
+                var length = f.length() - 1
+                while (b != 10.toByte() && length > 0) {
+                    length -= 1
+                    f.seek(length)
+                    b = f.readByte()
+                }
+                if (length == 0L) {
+                    f.setLength(0)
+                } else {
+                    f.setLength(length + 1)
+                }
+                f.close()
+            } else {
+                Toast.makeText(requireActivity(), "No Rows to Delete!", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
@@ -161,8 +178,10 @@ class FridgeFragment : Fragment() {
             setEditTextAttributes(editText2, "eg. Gallons", null)
             setEditTextAttributes(editText3, "eg. 11", null)
         }
-        tableRow.setBackgroundResource(color)
-        viewModel.changeColor()
+        if (viewModel.color.value != null) {
+            tableRow.setBackgroundResource(viewModel.color.value!!)
+            viewModel.changeColor()
+        }
 
         tableRow.addView(editText1)
         tableRow.addView(borderEnd1)
@@ -191,6 +210,13 @@ class FridgeFragment : Fragment() {
                 editTextList[i + 1].text.toString(),
                 editTextList[i + 2].text.toString()
             )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (viewModel.color.value == R.color.very_light_pink) {
+            viewModel.changeColor()
         }
     }
 

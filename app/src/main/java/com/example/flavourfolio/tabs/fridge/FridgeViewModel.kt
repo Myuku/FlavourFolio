@@ -8,7 +8,7 @@ class FridgeViewModel : ViewModel() {
     val color = MutableLiveData<Int>()
 
     init {
-        color.value = R.color.very_light_pink
+        color.value = R.color.light_pink
     }
 
     fun changeColor() {

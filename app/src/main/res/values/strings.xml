@@ -36,5 +36,8 @@
     <string name="fridge_unit_text">Unit</string>
     <string name="fridge_quantity_text">Quantity</string>
 
+    <string name="fridge_delete_text">Delete Last Row</string>
+    <string name="fridge_add_text">Add New Row</string>
+
 
 </resources>
