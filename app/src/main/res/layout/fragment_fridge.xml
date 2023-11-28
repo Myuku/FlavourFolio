@@ -1,13 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".tabs.fridge.FridgeFragment">
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
-
-</FrameLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TableLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:id="@+id/fridge_table"
+            android:stretchColumns="0, 2, 4">
+            <TableRow
+                android:background="@color/pink">
+                <TextView
+                    android:layout_column="0"
+                    android:textAlignment="center"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:text="@string/fridge_ingredient_text"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"/>
+                <TextView
+                    android:layout_column="1"
+                    android:textAlignment="center"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:text="@string/fridge_unit_text"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"/>
+                <TextView
+                    android:layout_column="2"
+                    android:textAlignment="center"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:text="@string/fridge_quantity_text"/>
+            </TableRow>
+        </TableLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="10dp">
+            <Button
+                android:id="@+id/fridge_del_row_button"
+                android:layout_width="175dp"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/pink"
+                android:text="@string/fridge_delete_text"
+                android:textColor="@color/white"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <Button
+                android:id="@+id/fridge_add_row_button"
+                android:layout_width="175dp"
+                android:layout_height="50dp"
+                android:backgroundTint="@color/pink"
+                android:text="@string/fridge_add_text"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
