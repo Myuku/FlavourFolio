@@ -3,43 +3,74 @@ package com.example.flavourfolio.tabs.recipes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flavourfolio.R
+import com.example.flavourfolio.database.Recipe
 
-// TODO: Not functional yet. This handles live data and interaction for cards.
-class CardAdapter(private val cardList: List<CardModel>) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
+
+class CardAdapter (list: List<Recipe>) :
+    RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
+
+
+    private var recipeList: List<Recipe> = list
+    var onItemClick : ((Recipe) -> Unit) ?= null
+    override fun getItemCount(): Int = recipeList.size
+
+    fun replace(newList: List<Recipe>){
+        recipeList = newList
+    }
+
+    // Make changes here if we are adding new elements to the view
+    // or if we want to set up listeners
+    inner class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val titleString: TextView = itemView.findViewById(R.id.recipe_card_title)
+        private val typeString: TextView = itemView.findViewById(R.id.recipe_card_type_text)
+        private val thumbnail: ImageView = itemView.findViewById(R.id.recipe_card_image)
+
+        // create a bind function to update the views with card data
+         fun bind(recipe: Recipe) {
+            titleString.text = recipe.name
+            typeString.text = recipe.type.toString()
+            if (recipe.image != null) {
+                thumbnail.setImageBitmap(recipe.image)
+            }
+         }
+
+        init {
+//            // Set long click listener on the itemView
+//            itemView.setOnLongClickListener {
+//                // Handle long click, open a dialog or bottom sheet to replace the card
+//                // Show the list of cards for replacement
+//                true
+//            }
+        }
+
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recipe_card, parent, false)
         return CardViewHolder(view)
     }
 
+    // Note: This is the function that assigns value to view elements.
+    // You will need to first find the elements by doing findViewById in CardViewHolder,
+    // then they will be available as an attribute from "holder"
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-        val card = cardList[position]
-        // Bind data to the card view
-        // holder.bind(card)
-    }
-
-    override fun getItemCount(): Int = cardList.size
-
-    inner class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Define views from card_item.xml and bind data
-        // Example: val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
-        // ...
-
-        init {
-            // Set long click listener on the itemView
-            itemView.setOnLongClickListener {
-                // Handle long click, open a dialog or bottom sheet to replace the card
-                // Show the list of cards for replacement
-                true
-            }
+//        // set text in recipe cards
+//        holder.titleString.text = recipeList[position].name
+//        holder.typeString.text = "Type: " + recipeList[position].type
+//
+//        // set image
+//        val bitmap = recipeList[position].image?.let {
+//            BitmapFactory.decodeByteArray(recipeList[position].image, 0, it.size)
+//        }
+//        holder.thumbnail.setImageBitmap(bitmap)
+        val recipe = recipeList[position]
+        holder.bind(recipe)
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(recipe)
         }
-
-        // You can create a bind function to update the views with card data
-        // fun bind(card: CardModel) {
-        //    titleTextView.text = card.title
-        //    ...
-        // }
     }
 }

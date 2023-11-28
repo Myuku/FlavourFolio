@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.hide()
         }
         requestPermissions()
+
         tabTitles = arrayOf(getString(R.string.tab_recipes),
         getString(R.string.tab_step_by_step), getString(R.string.tab_fridge))
         vpViewPager = findViewById(R.id.vpViewPager)
@@ -83,6 +84,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
+    }
+
+    fun switchTab(pos: Int) {
+        tabLayout.getTabAt(pos)?.select()
     }
 
 
