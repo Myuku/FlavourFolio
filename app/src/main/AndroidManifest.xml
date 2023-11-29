@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".tabs.AddRecipe.AddRecipeActivity"
+            android:name=".tabs.addRecipe.AddRecipeActivity"
             android:exported="true">
         </activity>
 

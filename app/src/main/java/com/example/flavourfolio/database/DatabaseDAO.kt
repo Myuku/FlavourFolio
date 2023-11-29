@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RecipeDao {
     @Insert
-    suspend fun insert(recipe: Recipe)
+    suspend fun insert(recipe: Recipe): Long
 
     @Query("DELETE FROM recipes_table WHERE recipe_id = :id")
     suspend fun delete(id: Int)
