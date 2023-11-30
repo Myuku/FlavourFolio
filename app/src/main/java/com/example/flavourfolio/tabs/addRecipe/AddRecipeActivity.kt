@@ -7,6 +7,7 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.flavourfolio.FlavourFolioApplication
@@ -14,13 +15,14 @@ import com.example.flavourfolio.R
 import com.example.flavourfolio.database.Recipe
 import com.example.flavourfolio.enums.RecipeType
 import com.example.flavourfolio.tabs.addRecipe.AddRecipeViewModel.AddRecipeViewModelFactory
+import kotlinx.coroutines.launch
 
 
 class AddRecipeActivity : AppCompatActivity() {
 
     private lateinit var rvStep: RecyclerView
     private lateinit var btnAddStep: Button
-    //private lateinit var stepAdapter: StepAdapter
+    private lateinit var stepAdapter: StepAdapter
     private lateinit var stepLayoutManager: LinearLayoutManager
 
     private var recipeId = -1
@@ -48,41 +50,27 @@ class AddRecipeActivity : AppCompatActivity() {
         recipeType = RecipeType.values()[intent.getIntExtra(AddRecipeDialog.TYPE_KEY, 0)]
         val newRecipe = Recipe(name = recipeName, type = recipeType)
 
-
-
-
-
-
-
-
+        initViews()
+        setStepRecyclerview()
 
         viewModel.insertRecipe(newRecipe).observe(this) { userId ->
             recipeId = userId.toInt()
+            stepAdapter = StepAdapter(this, recipeId, emptyList())
+            rvStep.adapter = stepAdapter
             // can only access rid from observe
-
-            val actionBar = supportActionBar
-            actionBar?.title = recipeId.toString()
         }
-
-
-
-//        initViews()
-//        setStepRecyclerview()
-//
-//        stepAdapter = StepAdapter()
-//        rvStep.adapter = stepAdapter
-//
-//        // add detail item
-//        stepAdapter.setOnStepClickListener(object : StepAdapter.OnStepItemClickListener {
-//            override fun OnItemClick(adapter: ActionAdapter?) {
-//                stepAdapter.addActionItem(ActionAdapter())
-//            }
-//        })
+        viewModel.currentSteps.observe(this) { steps ->
+            stepAdapter.replace(steps)
+            stepAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun initViews() {
         rvStep = findViewById(R.id.rvStep)
         btnAddStep = findViewById(R.id.btnAddStep)
+        btnAddStep.setOnClickListener {
+            addStep()
+        }
     }
 
     private fun setStepRecyclerview() {
@@ -90,10 +78,9 @@ class AddRecipeActivity : AppCompatActivity() {
         rvStep.layoutManager = stepLayoutManager
     }
 
-//    fun addRoutine(action: String, food: String) {
-//        stepAdapter.addItem(Step(action = action, food = food, step = stepAdapter.itemCount, rid = recipeId))
-//        stepLayoutManager.scrollToPositionWithOffset(0, 0)
-//    }
+    private fun addStep() {
+        stepAdapter.addItem()
+    }
 
 
     override fun onDestroy() {

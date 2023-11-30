@@ -27,11 +27,11 @@ data class Step(
     val rid: Int,
 
     @ColumnInfo(name = "step")
-    val step: Int,
+    var step: Int,
 
     @ColumnInfo(name = "action")
-    val action: String,
+    var action: String,
 
     @ColumnInfo(name = "food")
-    val food: String
+    var food: String
 )

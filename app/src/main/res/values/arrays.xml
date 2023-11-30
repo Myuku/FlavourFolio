@@ -5,4 +5,40 @@
         <item>Alphabetical</item>
         <item>Availability</item>
     </string-array>
+
+    <string-array name="action_values">
+        <item>Chop</item>
+        <item>Boil</item>
+        <item>Dice</item>
+        <item>Grill</item>
+        <item>Sear</item>
+        <item>Fry</item>
+        <item>Saute</item>
+        <item>Simmer</item>
+        <item>Roast</item>
+        <item>Knead</item>
+    </string-array>
+
+    <string-array name="tool_values">
+        <item>Pan</item>
+        <item>Cast-iron Pan</item>
+        <item>Pot</item>
+        <item>Knife</item>
+        <item>Blender</item>
+        <item>Grater</item>
+        <item>Whisk</item>
+    </string-array>
+
+    <string-array name="state_values">
+        <item>Large Chunks</item>
+        <item>Finely Diced</item>
+        <item>Stiff Peaks</item>
+        <item>Soft Peaks</item>
+        <item>Golden Brown</item>
+        <item>Rare</item>
+        <item>Medium Rare</item>
+        <item>Well Done</item>
+        <item>Mushy</item>
+        <item>El Dante</item>
+    </string-array>
 </resources>

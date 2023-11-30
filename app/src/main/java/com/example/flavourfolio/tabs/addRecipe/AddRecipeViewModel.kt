@@ -1,18 +1,18 @@
 package com.example.flavourfolio.tabs.addRecipe
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.flavourfolio.database.ActionRepository
 import com.example.flavourfolio.database.Recipe
 import com.example.flavourfolio.database.RecipeRepository
 import com.example.flavourfolio.database.Step
 import com.example.flavourfolio.database.StepRepository
-import com.example.flavourfolio.tabs.recipes.RecipesViewModel
-import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class AddRecipeViewModel(
@@ -21,16 +21,19 @@ class AddRecipeViewModel(
     private val actionRepository: ActionRepository
 ): ViewModel() {
 
+    val stepsLiveData: LiveData<List<Step>> = stepRepository.allSteps.asLiveData()
+    private val _recipeId = MutableLiveData<Long>()
+
+    val currentSteps: LiveData<List<Step>>
+        get() = _recipeId.switchMap { rid ->
+            stepRepository.retrieveSteps(rid.toInt()).asLiveData()
+        }
+
     fun insertRecipe(recipe: Recipe) = liveData {
         val response = recipeRepository.insert(recipe)
+        _recipeId.value = response
         emit(response)
     }
-
-
-
-
-
-
 
 
     @Suppress("UNCHECKED_CAST")

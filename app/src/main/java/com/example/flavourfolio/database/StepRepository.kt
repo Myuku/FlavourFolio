@@ -4,12 +4,12 @@ import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
 
 class StepRepository(private val stepDao: StepDao) {
+
+    val allSteps: Flow<List<Step>> = stepDao.getAllSteps()
+
     @WorkerThread
-    suspend fun retrieveSteps(rid: Int): Flow<List<Step>>? {
-        if (stepDao.isRecipeExist(rid)) {
-            return stepDao.getStepsForRecipe(rid)
-        }
-        return null
+    fun retrieveSteps(rid: Int): Flow<List<Step>> {
+        return stepDao.getStepsForRecipe(rid)
     }
 
     @WorkerThread
@@ -20,6 +20,11 @@ class StepRepository(private val stepDao: StepDao) {
         } else {
             1
         }
+    }
+
+    @WorkerThread
+    suspend fun update(step: Step) {
+        stepDao.update(step)
     }
 
     @WorkerThread
