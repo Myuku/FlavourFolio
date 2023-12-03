@@ -1,15 +1,10 @@
 package com.example.flavourfolio.tabs.addRecipe
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
-import android.provider.ContactsContract.CommonDataKinds.Nickname
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
@@ -17,26 +12,19 @@ import android.widget.EditText
 import android.widget.NumberPicker
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
-import com.example.flavourfolio.FlavourFolioApplication
 import com.example.flavourfolio.R
+import com.example.flavourfolio.database.Action
 import com.example.flavourfolio.database.Step
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
+import com.example.flavourfolio.enums.AffixType
 
-
-class StepAdapter(private val context: Context, val recipeId: Int, var stepItems: List<Step>) : RecyclerView.Adapter<StepAdapter.ViewHolder>() {
-
-    private val stepRepository = (context.applicationContext as FlavourFolioApplication).stepRepository
-    private val actionRepository = (context.applicationContext as FlavourFolioApplication).actionRepository
+class StepAdapter(private val context: Context, private val recipeId: Int,
+                  private val viewModel: AddRecipeViewModel) :
+    RecyclerView.Adapter<StepAdapter.ViewHolder>() {
 
     private var holders: ArrayList<ViewHolder> = ArrayList()
-
-    fun replace(newList: List<Step>){
-        stepItems = newList
-    }
-
+    val stepItems: ArrayList<Step> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -73,7 +61,6 @@ class StepAdapter(private val context: Context, val recipeId: Int, var stepItems
         val cbUntil: CheckBox = itemView.findViewById(R.id.cbUntil)
         val spnrState: Spinner = itemView.findViewById(R.id.add_recipe_state_spinner)
 
-
         init {
             spnrAction.adapter = ArrayAdapter.createFromResource(
                 context,
@@ -98,54 +85,53 @@ class StepAdapter(private val context: Context, val recipeId: Int, var stepItems
             npSeconds.minValue = 0
             npSeconds.maxValue = 59
         }
+        @SuppressLint("NotifyDataSetChanged")
         fun bind(step: Step) {
-
-            tvStepNum.text = "Step ${step.step}"
+            val stepName = "Step ${step.step}"
+            tvStepNum.text = stepName
             btnDeleteStep.setOnClickListener {
-                CoroutineScope(IO).launch {
-                    stepRepository.deleteStep(step.sid)
+                stepItems.remove(step)
+                for (i in bindingAdapterPosition..<itemCount) {
+                    stepItems[i].step -= 1
                 }
-                notifyItemRangeChanged(0, itemCount)
+                notifyDataSetChanged()
             }
-
-            // Tried to be able to change previous steps but lookin kinda broken
-//            spnrAction.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//                override fun onNothingSelected(parent: AdapterView<*>?) {}
-//                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//                    val newAction = holders[step.step-1].spnrAction.selectedItem.toString()
-//                    step.action = newAction
-//                }
-//            }
-//            etFood.addTextChangedListener(object : TextWatcher {
-//                override fun beforeTextChanged(sequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-//                override fun onTextChanged(sequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-//                override fun afterTextChanged(editable: Editable) {
-//                    val newFood = holders[step.step-1].etFood.text.toString()
-//                    step.food = newFood
-//                }
-//            })
-
         }
 
     }
     fun addItem() {
-        if (itemCount > 0) {
-            // update previous step
-            val step = stepItems[itemCount-1]
-            step.action = holders[itemCount-1].spnrAction.selectedItem.toString()
-            step.food = holders[itemCount-1].etFood.text.toString()
-            CoroutineScope(IO).launch {
-                stepRepository.update(step)
-            }
-        }
-        // add new item
-        CoroutineScope(IO).launch {
-            stepRepository.insert(Step(action = "", food = "", step = itemCount+1, rid = recipeId))
-        }
+        stepItems.add(Step(rid = recipeId, step = itemCount+1, action = "", food = ""))
+        notifyItemInserted(itemCount-1)
     }
 
+    fun finalize() {
+        for (i in 0..<itemCount) {
+            stepItems[i].action = holders[i].spnrAction.selectedItem.toString()
+            stepItems[i].food = holders[i].etFood.text.toString()
 
-
-
-
+            viewModel.insertStep(stepItems[i]).observe(context as LifecycleOwner) { stepId ->
+                if (holders[i].cbIn.isChecked) {
+                    viewModel.insertAction(Action(
+                        sid = stepId.toInt(),
+                        affix = AffixType.IN,
+                        detail = holders[i].spnrTool.selectedItem.toString()
+                    ))
+                }
+                if (holders[i].cbFor.isChecked) {
+                    viewModel.insertAction(Action(
+                        sid = stepId.toInt(),
+                        affix = AffixType.FOR,
+                        detail = "${holders[i].npHours.value}-${holders[i].npMinutes.value}-${holders[i].npSeconds.value}"
+                    ))
+                }
+                if (holders[i].cbUntil.isChecked) {
+                    viewModel.insertAction(Action(
+                        sid = stepId.toInt(),
+                        affix = AffixType.UNTIL,
+                        detail = holders[i].spnrState.selectedItem.toString()
+                    ))
+                }
+            }
+        }
+    }
 }

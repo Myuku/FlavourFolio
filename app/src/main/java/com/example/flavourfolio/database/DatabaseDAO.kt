@@ -36,7 +36,7 @@ interface RecipeDao {
 @Dao
 interface StepDao {
     @Insert
-    suspend fun insert(step: Step)
+    suspend fun insert(step: Step): Long
 
     @Update
     suspend fun update(step: Step)

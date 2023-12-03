@@ -13,13 +13,8 @@ class StepRepository(private val stepDao: StepDao) {
     }
 
     @WorkerThread
-    suspend fun insert(step: Step): Int {
-        return if (stepDao.isRecipeExist(step.rid)) {
-            stepDao.insert(step)
-            0
-        } else {
-            1
-        }
+    suspend fun insert(step: Step): Long {
+        return stepDao.insert(step)
     }
 
     @WorkerThread
