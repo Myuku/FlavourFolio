@@ -6,8 +6,16 @@ import kotlinx.coroutines.flow.Flow
 class ActionRepository(private val actionDao: ActionDao) {
 
     @WorkerThread
-    fun retrieveActions(sid: Int): Flow<List<Action>> {
-        return actionDao.getDetailsForStep(sid)
+    suspend fun retrieveIn(sid: Int): Action? {
+        return actionDao.getInForStep(sid)
+    }
+    @WorkerThread
+    suspend fun retrieveFor(sid: Int): Action? {
+        return actionDao.getForForStep(sid)
+    }
+    @WorkerThread
+    suspend fun retrieveUntil(sid: Int): Action? {
+        return actionDao.getUntilForStep(sid)
     }
 
     @WorkerThread

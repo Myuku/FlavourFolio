@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.Guideline
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.flavourfolio.FlavourFolioApplication
 import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
@@ -37,7 +38,10 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.floor
+
 
 class StepsFragment : Fragment() {
 
@@ -47,7 +51,7 @@ class StepsFragment : Fragment() {
     private lateinit var pbProgressBar: ProgressBar
     private lateinit var tvCurrentStep: TextView
     private lateinit var aboveButtons: Guideline
-    private lateinit var ivWebImage: ShapeableImageView
+    private lateinit var ivWebImageSmall: ShapeableImageView
     private lateinit var btnNextStep: Button
     private lateinit var btnPrevStep: Button
     // Timer View elements
@@ -58,10 +62,12 @@ class StepsFragment : Fragment() {
     private lateinit var timerReceiver: BroadcastReceiver
     private var timerRunning: Boolean = false
 
+    private lateinit var view: View
     private var sharedPref: SharedPreferences? = null
 
     private val viewModel: StepsViewModel by viewModels {
         StepsViewModel.StepsViewModelFactory(
+            (requireActivity().application as FlavourFolioApplication).recipeRepository,
             (requireActivity().application as FlavourFolioApplication).stepRepository,
             (requireActivity().application as FlavourFolioApplication).actionRepository
         )
@@ -82,11 +88,10 @@ class StepsFragment : Fragment() {
                 updateTimerUI(intent)
             }
         }
-        initializeViews(view)
-        initializeButtons(view)
-
-        initializeTimer(view)
-        initializeImage(view)
+        this.view = view
+        initializeViews()
+        initializeButtons()
+        initializeTimer()
     }
 
     private fun getPassedValue() {
@@ -95,72 +100,48 @@ class StepsFragment : Fragment() {
             Context.MODE_PRIVATE
         ) ?: return
         val newRecipeId = sharedPref!!.getInt("recipe_id_key", -1)
-        // Set all elements visible in case they were not
-        btnNextStep.visibility = VISIBLE
-        btnPrevStep.visibility = VISIBLE
-        tvCurrentStep.visibility = VISIBLE
-        pbProgressBar.visibility = VISIBLE
+        sharedPref!!.edit().clear().apply()
 
-
-        if (newRecipeId == -1) {
+        if (viewModel.recipeId == -1) {
             initiateStartPage()
-        } else if (newRecipeId != viewModel.recipeId) {
+        }
+        if (newRecipeId != -1) {
+            // Set all elements visible in case they were not
+            btnNextStep.visibility = VISIBLE
+            btnPrevStep.visibility = VISIBLE
+            tvCurrentStep.visibility = VISIBLE
+            pbProgressBar.visibility = VISIBLE
             // Update all the values to the new values
-            viewModel.updateRecipe(newRecipeId)
-            startView()
-            tvCurrentStep.text = resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
-            pbProgressBar.max = viewModel.maxSteps
-            pbProgressBar.progress = viewModel.currProgress
-            btnPrevStep.alpha = 0.5f
-            btnNextStep.alpha = 1.0f
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.updateRecipe(newRecipeId).join()
+                determineView('n')
+                tvCurrentStep.text = resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
+                pbProgressBar.max = viewModel.maxSteps
+                pbProgressBar.progress = viewModel.currProgress
+                btnPrevStep.alpha = 0.5f
+                btnNextStep.alpha = 1.0f
+            }
         }
+        // if equal, dont do anything
     }
 
-    private fun initiateStartPage() {
-        btnNextStep.visibility = INVISIBLE
-        btnPrevStep.visibility = INVISIBLE
-        tvCurrentStep.visibility = INVISIBLE
-        pbProgressBar.visibility = INVISIBLE
-        startView()
-    }
-
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    override fun onResume() {
-        super.onResume()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR), Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR))
-        }
-        getPassedValue()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        requireActivity().unregisterReceiver(timerReceiver)
-    }
-
-    private fun initializeViews(view: View) {
+    private fun initializeViews() {
         // Initialize view flipper
         vfViewFlipper = view.findViewById(R.id.vfViewFlipper)
         startView()
-
         // Initialize progress bar
         pbProgressBar = view.findViewById(R.id.pbProgressBar)
-
         // Initialize current step
         tvCurrentStep = view.findViewById(R.id.tvStepCounter)
         tvCurrentStep.text = resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
-
         // Initialize line at which snack-bar is toasted
         aboveButtons = view.findViewById(R.id.lineButtons)
-
         // Initialize Buttons
         btnNextStep = view.findViewById(R.id.btnNextStep)
         btnPrevStep = view.findViewById(R.id.btnPrevStep)
     }
 
-    private fun initializeTimer(view: View) {
+    private fun initializeTimer() {
         tvTimer = view.findViewById(R.id.tvTimer)
 
         btnStartTimer = view.findViewById(R.id.btnStartTimer)
@@ -174,14 +155,11 @@ class StepsFragment : Fragment() {
         }
     }
 
-    private fun initializeButtons(view: View) {
+    private fun initializeButtons() {
 
         btnNextStep.setOnClickListener {
             if (viewModel.currProgress == viewModel.maxSteps - 1) {
                 btnNextStep.alpha = 0.5f
-                if (sharedPref != null) {
-                    sharedPref!!.edit().remove("recipe_id_key").apply()
-                }
             }
             if (viewModel.incrementStep() == 1) {
                 val snack = Snackbar.make(
@@ -191,7 +169,8 @@ class StepsFragment : Fragment() {
                 snack.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_pink))
                 snack.show()
             } else {
-                nextView()
+                // Switching to new view
+                determineView('r')
                 btnPrevStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
@@ -211,7 +190,8 @@ class StepsFragment : Fragment() {
                 snack.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_pink))
                 snack.show()
             } else {
-                prevView()
+                // Switching to new view
+                determineView('l')
                 btnNextStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
@@ -220,11 +200,14 @@ class StepsFragment : Fragment() {
         }
     }
 
-    private fun initializeImage(view: View) {
-        ivWebImage = view.findViewById(R.id.ivWebImage)
+    private fun initializeImage() {
+        //ivWebImageLarge = view.findViewById(R.id.ivWebImageLarge)
+        ivWebImageSmall = view.findViewById(R.id.ivWebImageSmall)
 
         CoroutineScope(IO).launch {
-            val imageString = ImageRetriever.retrieveImageLink("${viewModel.action}ing ${viewModel.subject}")
+            val currentStep = viewModel.currSteps[viewModel.currProgress-1]
+            val imageString = ImageRetriever.retrieveImageLink(
+                "${currentStep.action}ing ${currentStep.food}")
             val url = URL(imageString)
             val img = BitmapFactory.decodeStream(withContext(IO) {
                 url.openConnection().getInputStream()
@@ -240,25 +223,61 @@ class StepsFragment : Fragment() {
                             (ivWidth.toDouble() / currentBitmapWidth.toDouble())).toInt()
 
                 val scaledImg = Bitmap.createScaledBitmap(img, ivWidth, newHeight, true)
-
-                ivWebImage.setImageBitmap(scaledImg)
+                //ivWebImageLarge.setImageBitmap(scaledImg)
+                ivWebImageSmall.setImageBitmap(scaledImg)
             }
         }
     }
 
-    // TODO: these two are only for testing, will only use showView()
-    private fun nextView() {
-        vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_right)
-        vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left)
-        vfViewFlipper.showNext()
+
+    // ALL VIEW FLIPPER STUFF
+    @SuppressLint("NewApi")
+    private fun determineView(direction: Char) {
+        if (viewModel.currProgress == viewModel.maxSteps) {
+            showView(StepViewState.DONE, direction)
+            return
+        }
+
+        val currentStep = viewModel.currSteps[viewModel.currProgress-1]
+        viewModel.retrieveActions(currentStep.sid)
+
+        if (viewModel.actionFor != null) {
+            // With Timer
+            val localTime = LocalTime.parse(
+                viewModel.actionFor!!.detail,
+                DateTimeFormatter.ofPattern("HH-mm-ss")
+            )
+            viewModel.recipeTimer = (localTime.toSecondOfDay() * 1000).toLong()
+
+            initializeImage()
+            showView(StepViewState.TIMER, direction)
+        } else {
+            // Without Timer
+            initializeImage()
+            showView(StepViewState.PICTURE, direction)
+        }
+        //setActionViews()
     }
-    private fun prevView() {
-        vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_left)
-        vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right)
-        vfViewFlipper.showPrevious()
+
+    private fun setActionViews() {
+        TODO("Not yet implemented")
     }
-    // Everything in here will be put into nextView and prevView with (idx: Int)
-    private fun showView(type: StepViewState) {
+
+    private fun showView(type: StepViewState, direction: Char) {
+        when (direction) {
+            'r' -> {
+                //vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_right)
+                //vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left)
+            }
+            'l' -> {
+                //vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_left)
+                //vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right)
+            }
+            else -> {
+                vfViewFlipper.inAnimation = null
+                vfViewFlipper.outAnimation = null
+            }
+        }
         when (type) {
             StepViewState.PICTURE -> vfViewFlipper.displayedChild = StepViewState.PICTURE.idx
             StepViewState.TIMER -> vfViewFlipper.displayedChild = StepViewState.TIMER.idx
@@ -266,11 +285,38 @@ class StepsFragment : Fragment() {
             StepViewState.DONE -> vfViewFlipper.displayedChild = StepViewState.DONE.idx
         }
     }
+
     private fun startView() {
         vfViewFlipper.flipInterval = 0
         vfViewFlipper.inAnimation = null
         vfViewFlipper.outAnimation = null
         vfViewFlipper.displayedChild = StepViewState.START.idx
+    }
+
+    private fun initiateStartPage() {
+        btnNextStep.visibility = INVISIBLE
+        btnPrevStep.visibility = INVISIBLE
+        tvCurrentStep.visibility = INVISIBLE
+        pbProgressBar.visibility = INVISIBLE
+        startView()
+    }
+
+
+    // ALL TIMER SERVICE STUFF
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR), Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            requireActivity().registerReceiver(timerReceiver, IntentFilter(TimerService.COUNTDOWN_BR))
+        }
+        getPassedValue()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        requireActivity().unregisterReceiver(timerReceiver)
     }
 
     private fun startTimer(duration: Long) {

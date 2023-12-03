@@ -16,6 +16,11 @@ class RecipeRepository(private val recipeDao: RecipeDao) {
     }
 
     @WorkerThread
+    suspend fun getRecipe(rid: Int): Recipe {
+        return recipeDao.getRecipe(rid)
+    }
+
+    @WorkerThread
     suspend fun delete(rid: Int) {
         recipeDao.delete(rid)
     }
