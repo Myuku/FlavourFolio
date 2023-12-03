@@ -27,6 +27,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".tabs.addRecipe.AddRecipeActivity"
+            android:exported="true">
+        </activity>
+
         <service android:name=".service.TimerService" android:enabled="true"/>
 
         <provider

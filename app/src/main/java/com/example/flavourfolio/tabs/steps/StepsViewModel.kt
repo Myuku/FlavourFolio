@@ -51,7 +51,7 @@ class StepsViewModel(
         recipeId = rid
         currProgress = 1
         maxSteps = stepRepository.length(rid)
-        currentSteps = stepRepository.retrieveSteps(rid)?.asLiveData()
+        //currentSteps = stepRepository.retrieveSteps(rid)?.asLiveData()
     }
 
 

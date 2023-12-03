@@ -3,12 +3,13 @@ package com.example.flavourfolio.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecipeDao {
     @Insert
-    suspend fun insert(recipe: Recipe)
+    suspend fun insert(recipe: Recipe): Long
 
     @Query("DELETE FROM recipes_table WHERE recipe_id = :id")
     suspend fun delete(id: Int)
@@ -35,7 +36,10 @@ interface RecipeDao {
 @Dao
 interface StepDao {
     @Insert
-    suspend fun insert(step: Step)
+    suspend fun insert(step: Step): Long
+
+    @Update
+    suspend fun update(step: Step)
 
     @Query("DELETE FROM steps_table WHERE step_id = :id")
     suspend fun delete(id: Int)
@@ -45,9 +49,12 @@ interface StepDao {
 
     @Query("SELECT COUNT(*) FROM steps_table WHERE recipe_id = :recipeId")
     suspend fun length(recipeId: Int): Int
-    @Query("SELECT * FROM steps_table WHERE recipe_id = :recipeId ORDER BY step")
+    @Query("SELECT * FROM steps_table WHERE recipe_id = :recipeId ORDER BY step_id")
     fun getStepsForRecipe(recipeId: Int): Flow<List<Step>>
     // Add other required queries
+
+    @Query("SELECT * FROM steps_table")
+    fun getAllSteps(): Flow<List<Step>>
 
 }
 

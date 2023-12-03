@@ -2,8 +2,8 @@ package com.example.flavourfolio.tabs.recipes
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ import com.example.flavourfolio.FlavourFolioApplication
 import com.example.flavourfolio.MainActivity
 import com.example.flavourfolio.R
 import com.example.flavourfolio.database.Recipe
-import com.example.flavourfolio.enums.RecipeType
+import com.example.flavourfolio.tabs.addRecipe.AddRecipeDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -54,16 +54,15 @@ class RecipesFragment : Fragment() {
 
         fabAddRecipe = view.findViewById(R.id.fabAddRecipe)
         fabAddRecipe.setOnClickListener {
-            // val intent = Intent(requireContext(), AddRecipeActivity::class.java)
-            // startActivity(intent)
+            val dialog = AddRecipeDialog()
+            dialog.show(parentFragmentManager, "Add Recipe Dialog")
 
             // Testing
-            Log.d("myu", "inserting Steak")
-            val recipe = Recipe(name = "Steak", type = RecipeType.DINNER)
-            viewModel.insert(recipe)
+//            Log.d("myu", "inserting Steak")
+//            val recipe = Recipe(name = "Steak", type = RecipeType.DINNER)
+//            viewModel.insert(recipe)
         }
     }
-
 
     private fun enableSwipeToDelete(view: View, recyclerView: RecyclerView) {
         val swipeToDeleteCallback: SwipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()) {

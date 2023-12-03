@@ -59,34 +59,34 @@ class RecipesViewModel(
     }
 
     // This is really just for testing, wont be needing it anymore
-    fun getDessertStepsFor(position: Int) = viewModelScope.launch {
-        val dessertList = dessertsLiveData.value
-        if (!dessertList.isNullOrEmpty()){
-            val id = dessertList[position].rid
-            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
-        }
-    }
-    fun getDinnerStepsFor(position: Int) = viewModelScope.launch {
-        val dinnerList = dinnerLiveData.value
-        if (!dinnerList.isNullOrEmpty()){
-            val id = dinnerList[position].rid
-            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
-        }
-    }
-    fun getBreakfastStepsFor(position: Int) = viewModelScope.launch {
-        val breakfastList = breakfastLiveData.value
-        if (!breakfastList.isNullOrEmpty()){
-            val id = breakfastList[position].rid
-            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
-        }
-    }
-    fun getLunchStepsFor(position: Int) = viewModelScope.launch {
-        val lunchList = lunchLiveData.value
-        if (!lunchList.isNullOrEmpty()){
-            val id = lunchList[position].rid
-            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
-        }
-    }
+//    fun getDessertStepsFor(position: Int) = viewModelScope.launch {
+//        val dessertList = dessertsLiveData.value
+//        if (!dessertList.isNullOrEmpty()){
+//            val id = dessertList[position].rid
+//            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
+//        }
+//    }
+//    fun getDinnerStepsFor(position: Int) = viewModelScope.launch {
+//        val dinnerList = dinnerLiveData.value
+//        if (!dinnerList.isNullOrEmpty()){
+//            val id = dinnerList[position].rid
+//            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
+//        }
+//    }
+//    fun getBreakfastStepsFor(position: Int) = viewModelScope.launch {
+//        val breakfastList = breakfastLiveData.value
+//        if (!breakfastList.isNullOrEmpty()){
+//            val id = breakfastList[position].rid
+//            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
+//        }
+//    }
+//    fun getLunchStepsFor(position: Int) = viewModelScope.launch {
+//        val lunchList = lunchLiveData.value
+//        if (!lunchList.isNullOrEmpty()){
+//            val id = lunchList[position].rid
+//            currentSteps = stepRepository.retrieveSteps(id)?.asLiveData()
+//        }
+//    }
 }
 
 @Suppress("UNCHECKED_CAST")

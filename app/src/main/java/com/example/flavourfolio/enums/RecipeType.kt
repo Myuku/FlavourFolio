@@ -1,8 +1,13 @@
 package com.example.flavourfolio.enums
 
-enum class RecipeType(idx: Int) {
-    DESERT(0),
-    DINNER(1),
-    BREAKFAST(2),
-    LUNCH(3)
+enum class RecipeType(val value: String) {
+    DESSERT("Dessert"),
+    DINNER("Dinner"),
+    BREAKFAST("Breakfast"),
+    LUNCH("Lunch");
+
+    override fun toString(): String {
+        return value
+    }
 }
+

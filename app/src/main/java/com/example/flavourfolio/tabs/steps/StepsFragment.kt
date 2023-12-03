@@ -107,7 +107,7 @@ class StepsFragment : Fragment() {
         } else if (newRecipeId != viewModel.recipeId) {
             // Update all the values to the new values
             viewModel.updateRecipe(newRecipeId)
-            vfViewFlipper.displayedChild = StepViewState.START.idx
+            startView()
             tvCurrentStep.text = resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
             pbProgressBar.max = viewModel.maxSteps
             pbProgressBar.progress = viewModel.currProgress
@@ -121,7 +121,7 @@ class StepsFragment : Fragment() {
         btnPrevStep.visibility = INVISIBLE
         tvCurrentStep.visibility = INVISIBLE
         pbProgressBar.visibility = INVISIBLE
-        vfViewFlipper.displayedChild = StepViewState.START.idx
+        startView()
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -143,7 +143,7 @@ class StepsFragment : Fragment() {
     private fun initializeViews(view: View) {
         // Initialize view flipper
         vfViewFlipper = view.findViewById(R.id.vfViewFlipper)
-        vfViewFlipper.displayedChild = StepViewState.START.idx
+        startView()
 
         // Initialize progress bar
         pbProgressBar = view.findViewById(R.id.pbProgressBar)
@@ -265,6 +265,12 @@ class StepsFragment : Fragment() {
             StepViewState.START -> vfViewFlipper.displayedChild = StepViewState.START.idx
             StepViewState.DONE -> vfViewFlipper.displayedChild = StepViewState.DONE.idx
         }
+    }
+    private fun startView() {
+        vfViewFlipper.flipInterval = 0
+        vfViewFlipper.inAnimation = null
+        vfViewFlipper.outAnimation = null
+        vfViewFlipper.displayedChild = StepViewState.START.idx
     }
 
     private fun startTimer(duration: Long) {

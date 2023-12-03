@@ -11,8 +11,8 @@ class RecipeRepository(private val recipeDao: RecipeDao) {
     val lunchRecipes: Flow<List<Recipe>> = recipeDao.getLunchRecipes()
 
     @WorkerThread
-    suspend fun insert(recipe: Recipe) {
-        recipeDao.insert(recipe)
+    suspend fun insert(recipe: Recipe): Long {
+        return recipeDao.insert(recipe)
     }
 
     @WorkerThread
