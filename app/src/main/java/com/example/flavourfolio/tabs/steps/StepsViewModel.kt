@@ -61,8 +61,7 @@ class StepsViewModel(
         actionIn = actionRepository.retrieveIn(sid)
         actionFor = actionRepository.retrieveFor(sid)
         actionUntil = actionRepository.retrieveUntil(sid)
-
-    }.join()
+    }.join() // prevents a race condition
 
 
     @Suppress("UNCHECKED_CAST")

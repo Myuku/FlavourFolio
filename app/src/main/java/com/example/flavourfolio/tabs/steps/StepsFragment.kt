@@ -172,7 +172,7 @@ class StepsFragment : Fragment() {
             } else {
                 lifecycleScope.launch {
                 // Switching to new view
-                determineView('r')
+                    determineView('r')
                 }
                 btnPrevStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
@@ -205,7 +205,7 @@ class StepsFragment : Fragment() {
         }
     }
 
-    private fun initializeImage() {
+    private fun initializeImage() { // TODO: Fix race condition issue with images
         //ivWebImageLarge = view.findViewById(R.id.ivWebImageLarge)
         ivWebImageSmall = view.findViewById(R.id.ivWebImageSmall)
         var ivWebImageSmall2 : ShapeableImageView = view.findViewById(R.id.ivWebImageSmall2)
