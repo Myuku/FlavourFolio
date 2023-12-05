@@ -150,6 +150,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Second View -->
+<!--        TODO: finish layout-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clLowerSection2"
             android:layout_width="match_parent"
@@ -176,14 +177,16 @@
                 app:layout_constraintVertical_bias="1.0"
                 tools:layout_editor_absoluteX="0dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="Third"
-                    android:textStyle="bold"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivWebImageSmall2"
+                    android:layout_width="155dp"
+                    android:layout_height="155dp"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+                    app:layout_constraintBottom_toBottomOf="@id/clUpperSection2"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    tools:src="@tools:sample/avatars" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

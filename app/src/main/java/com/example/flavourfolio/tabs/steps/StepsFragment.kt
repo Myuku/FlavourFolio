@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -169,8 +170,10 @@ class StepsFragment : Fragment() {
                 snack.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_pink))
                 snack.show()
             } else {
+                lifecycleScope.launch {
                 // Switching to new view
                 determineView('r')
+                }
                 btnPrevStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
@@ -191,7 +194,9 @@ class StepsFragment : Fragment() {
                 snack.show()
             } else {
                 // Switching to new view
-                determineView('l')
+                lifecycleScope.launch {
+                    determineView('l')
+                }
                 btnNextStep.alpha = 1.0f
                 pbProgressBar.progress = viewModel.currProgress
                 tvCurrentStep.text =
@@ -203,6 +208,7 @@ class StepsFragment : Fragment() {
     private fun initializeImage() {
         //ivWebImageLarge = view.findViewById(R.id.ivWebImageLarge)
         ivWebImageSmall = view.findViewById(R.id.ivWebImageSmall)
+        var ivWebImageSmall2 : ShapeableImageView = view.findViewById(R.id.ivWebImageSmall2)
 
         CoroutineScope(IO).launch {
             val currentStep = viewModel.currSteps[viewModel.currProgress-1]
@@ -225,6 +231,7 @@ class StepsFragment : Fragment() {
                 val scaledImg = Bitmap.createScaledBitmap(img, ivWidth, newHeight, true)
                 //ivWebImageLarge.setImageBitmap(scaledImg)
                 ivWebImageSmall.setImageBitmap(scaledImg)
+                ivWebImageSmall2.setImageBitmap(scaledImg)
             }
         }
     }
@@ -232,16 +239,18 @@ class StepsFragment : Fragment() {
 
     // ALL VIEW FLIPPER STUFF
     @SuppressLint("NewApi")
-    private fun determineView(direction: Char) {
+    private suspend fun determineView(direction: Char) {
+        // if we have reached the max step, show the done page
         if (viewModel.currProgress == viewModel.maxSteps) {
             showView(StepViewState.DONE, direction)
             return
         }
 
+        // if we have not reached the max step, first get the step we requested
         val currentStep = viewModel.currSteps[viewModel.currProgress-1]
-        viewModel.retrieveActions(currentStep.sid)
-
-        if (viewModel.actionFor != null) {
+        viewModel.retrieveActions(currentStep.sid) // then get what activity is on this step
+        Log.d("action", viewModel.actionFor.toString())
+        if (viewModel.actionFor != null) { // if the activity isn't empty
             // With Timer
             val localTime = LocalTime.parse(
                 viewModel.actionFor!!.detail,
@@ -278,6 +287,7 @@ class StepsFragment : Fragment() {
                 vfViewFlipper.outAnimation = null
             }
         }
+
         when (type) {
             StepViewState.PICTURE -> vfViewFlipper.displayedChild = StepViewState.PICTURE.idx
             StepViewState.TIMER -> vfViewFlipper.displayedChild = StepViewState.TIMER.idx

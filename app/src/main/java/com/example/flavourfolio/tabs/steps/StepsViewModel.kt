@@ -1,5 +1,6 @@
 package com.example.flavourfolio.tabs.steps
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
@@ -56,11 +57,12 @@ class StepsViewModel(
         currSteps = stepRepository.retrieveSteps(rid)
     }
 
-    fun retrieveActions(sid: Int) = viewModelScope.launch {
+    suspend fun retrieveActions(sid: Int) = viewModelScope.launch {
         actionIn = actionRepository.retrieveIn(sid)
         actionFor = actionRepository.retrieveFor(sid)
         actionUntil = actionRepository.retrieveUntil(sid)
-    }
+
+    }.join()
 
 
     @Suppress("UNCHECKED_CAST")
