@@ -39,15 +39,17 @@
         android:layout_marginTop="5dp"
         android:layout_marginStart="10dp" />
 
-    <ImageView
-        android:id="@+id/recipe_card_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recipe_card_type_text"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        tools:srcCompat="@tools:sample/avatars"
-        android:contentDescription="@string/recipe_card_image_context" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/recipe_card_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recipe_card_type_text"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/recipe_card_image_context" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

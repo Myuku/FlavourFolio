@@ -1,6 +1,8 @@
 package com.example.flavourfolio.tabs.addRecipe
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -43,7 +45,15 @@ class AddRecipeActivity : AppCompatActivity() {
         }
         recipeName = intent.getStringExtra(AddRecipeDialog.NAME_KEY).toString()
         recipeType = RecipeType.values()[intent.getIntExtra(AddRecipeDialog.TYPE_KEY, 0)]
-        val newRecipe = Recipe(name = recipeName, type = recipeType)
+        val imgByteArray = intent.getByteArrayExtra(AddRecipeDialog.IMAGE_KEY)
+        var imgBitmap: Bitmap?
+        if (imgByteArray != null) {
+            imgBitmap = BitmapFactory.decodeByteArray(imgByteArray, 0, imgByteArray.size)
+        } else {
+            imgBitmap = null
+        }
+
+        val newRecipe = Recipe(name = recipeName, image = imgBitmap, type = recipeType)
 
         initViews()
         setStepRecyclerview()

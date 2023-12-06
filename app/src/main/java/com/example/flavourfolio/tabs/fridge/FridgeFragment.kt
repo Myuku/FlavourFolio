@@ -34,6 +34,8 @@ class FridgeFragment : Fragment() {
     }
 
     private lateinit var viewModel: FridgeViewModel
+    private lateinit var csvFile: File
+    private val csvFileName = "fridge.csv"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,8 +48,7 @@ class FridgeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(FridgeViewModel::class.java)
 
-        val csvFileName = "fridge.csv"
-        val csvFile = File(requireActivity().getExternalFilesDir(null), csvFileName)
+        csvFile = File(requireActivity().getExternalFilesDir(null), csvFileName)
         csvFile.createNewFile()
 
         val tableLayout: TableLayout = view.findViewById(R.id.fridge_table)
@@ -218,6 +219,28 @@ class FridgeFragment : Fragment() {
         if (viewModel.color.value == R.color.very_light_pink) {
             viewModel.changeColor()
         }
+    }
+
+    // use this function like this in recipes fragment:
+    //  val fridgeFragment = FridgeFragment.newInstance()
+    //  fridgeFragment.isIngredientInFridge("ice cream")
+    fun isIngredientInFridge(ingredient: String): Boolean {
+
+        // make sure the file is initialized
+        csvFile = File(requireActivity().getExternalFilesDir(null), csvFileName)
+        csvFile.createNewFile()
+
+        val reader = FileInputStream(csvFile).bufferedReader()
+        var line = reader.readLine()
+        while (!line.isNullOrEmpty()) {
+            val data = line.split(',')
+            if (ingredient.trim() == data[0].trim()) {
+                return true
+            }
+            line = reader.readLine()
+        }
+        reader.close()
+        return false
     }
 
 }
