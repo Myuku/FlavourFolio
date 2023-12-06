@@ -326,7 +326,16 @@ class StepsFragment : Fragment() {
         // if we have not reached the max step, first get the step we requested
         val currentStep = viewModel.currSteps[viewModel.currProgress-1]
         viewModel.retrieveActions(currentStep.sid) // then get what activity is on this step
-        Log.d("action", viewModel.actionFor.toString())
+        actionLabelTextView.visibility = VISIBLE
+        actionTextTextView.visibility = VISIBLE
+        inTextViewLabel.visibility = VISIBLE
+        inTextView.visibility = VISIBLE
+        forTextViewLabel.visibility = VISIBLE
+        forTextView.visibility = VISIBLE
+        untilTextViewLabel.visibility = VISIBLE
+        untilTextView.visibility = VISIBLE
+        recipeNameTextView.visibility = VISIBLE
+        recipeLabelTextView.visibility = VISIBLE
         if (viewModel.actionFor != null) { // if the activity isn't empty
             // With Timer
             val localTime = LocalTime.parse(

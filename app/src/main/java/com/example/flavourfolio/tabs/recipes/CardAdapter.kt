@@ -51,15 +51,6 @@ class CardAdapter :
     // You will need to first find the elements by doing findViewById in CardViewHolder,
     // then they will be available as an attribute from "holder"
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-//        // set text in recipe cards
-//        holder.titleString.text = recipeList[position].name
-//        holder.typeString.text = "Type: " + recipeList[position].type
-//
-//        // set image
-//        val bitmap = recipeList[position].image?.let {
-//            BitmapFactory.decodeByteArray(recipeList[position].image, 0, it.size)
-//        }
-//        holder.thumbnail.setImageBitmap(bitmap)
         val recipe = recipeList[position]
         holder.bind(recipe)
         holder.itemView.setOnClickListener {
