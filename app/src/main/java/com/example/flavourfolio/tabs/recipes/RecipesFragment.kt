@@ -37,6 +37,11 @@ class RecipesFragment : Fragment() {
     private lateinit var spnrSortBy: Spinner
     private lateinit var svSearch: SearchView
 
+    private lateinit var dessertsAdapter: CardAdapter
+    private lateinit var dinnerAdapter: CardAdapter
+    private lateinit var breakfastAdapter: CardAdapter
+    private lateinit var lunchAdapter: CardAdapter
+
 
     private val viewModel: RecipesViewModel by viewModels {
         RecipesViewModelFactory((requireActivity().application as FlavourFolioApplication).recipeRepository,
@@ -183,10 +188,10 @@ class RecipesFragment : Fragment() {
 
     private fun fillAdapters() {
         // Create Adapter
-        val dessertsAdapter = CardAdapter(requireContext(), viewModel)
-        val dinnerAdapter = CardAdapter(requireContext(), viewModel)
-        val breakfastAdapter = CardAdapter(requireContext(), viewModel)
-        val lunchAdapter = CardAdapter(requireContext(), viewModel)
+        dessertsAdapter = CardAdapter(requireContext(), viewModel)
+        dinnerAdapter = CardAdapter(requireContext(), viewModel)
+        breakfastAdapter = CardAdapter(requireContext(), viewModel)
+        lunchAdapter = CardAdapter(requireContext(), viewModel)
         // Set onClickListener
         dessertsAdapter.onItemClick = this::useRecipe
         dinnerAdapter.onItemClick = this::useRecipe
@@ -212,6 +217,14 @@ class RecipesFragment : Fragment() {
                 lunchAdapter.replace(lunch)
             }
         }
+    }
+
+    override fun onResume() {
+        dessertsAdapter.notifyDataSetChanged()
+        dinnerAdapter.notifyDataSetChanged()
+        breakfastAdapter.notifyDataSetChanged()
+        lunchAdapter.notifyDataSetChanged()
+        super.onResume()
     }
 
     private fun useRecipe(recipe: Recipe) {
