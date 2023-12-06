@@ -309,6 +309,16 @@ class StepsFragment : Fragment() {
     private suspend fun determineView(direction: Char) {
         // if we have reached the max step, show the done page
         if (viewModel.currProgress == viewModel.maxSteps) {
+            actionLabelTextView.visibility = GONE
+            actionTextTextView.visibility = GONE
+            inTextViewLabel.visibility = GONE
+            inTextView.visibility = GONE
+            forTextViewLabel.visibility = GONE
+            forTextView.visibility = GONE
+            untilTextViewLabel.visibility = GONE
+            untilTextView.visibility = GONE
+            recipeNameTextView.visibility = GONE
+            recipeLabelTextView.visibility = GONE
             showView(StepViewState.DONE, direction)
             return
         }
