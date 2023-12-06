@@ -13,6 +13,30 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.85" />
 
+    <TextView
+        android:id="@+id/recipeNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginVertical="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textStyle="bold"
+        android:text="Recipe:"/>
+
+    <TextView
+        android:id="@+id/recipeNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginVertical="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/recipeNameLabel"
+        android:textStyle="bold"
+        android:text="RecipeName"/>
+
     <ProgressBar
         android:id="@+id/pbProgressBar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -21,25 +45,120 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:progressDrawable="@drawable/sbs_progress_bar_bg"
-        app:layout_constraintBottom_toTopOf="@+id/line0.05p"
+        app:layout_constraintBottom_toTopOf="@+id/line0.10p"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/recipeNameLabel" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/line0.05p"
+        android:id="@+id/line0.10p"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05"/>
+        app:layout_constraintGuide_percent="0.10"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/pbProgressBar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:elevation="100dp"
+        android:layout_margin="20dp">
+
+        <TextView
+            android:id="@+id/actionTextLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:text="Action"/>
+        <TextView
+            android:id="@+id/actionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/actionTextLabel"
+            app:layout_constraintLeft_toRightOf="@id/actionTextLabel"
+            android:layout_marginStart="6dp"
+            android:textStyle="bold"
+            android:text="ActionText"
+            android:textSize="22sp"/>
+
+        <TextView
+            android:id="@+id/inTextLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/actionText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="In:"/>
+        <TextView
+            android:id="@+id/inText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/inTextLabel"
+            app:layout_constraintLeft_toRightOf="@id/inTextLabel"
+            android:layout_marginStart="10dp"
+            android:text="InText"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/forTextLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/inText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="For:"/>
+        <TextView
+            android:id="@+id/forText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@+id/forTextLabel"
+            app:layout_constraintLeft_toRightOf="@id/forTextLabel"
+            android:layout_marginStart="10dp"
+            android:text="forText"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/untilTextLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/forText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Until:"/>
+        <TextView
+            android:id="@+id/untilText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@+id/untilTextLabel"
+            app:layout_constraintLeft_toRightOf="@id/untilTextLabel"
+            android:layout_marginStart="10dp"
+            android:text="untilText"
+            android:textSize="18sp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ViewFlipper
         android:id="@+id/vfViewFlipper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/lineButtons"
-        app:layout_constraintTop_toTopOf="@id/line0.05p">
+        app:layout_constraintTop_toTopOf="@id/line0.10p">
 
         <!-- First view -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,11 +191,9 @@
                     android:id="@+id/vwTimerBody"
                     android:layout_width="match_parent"
                     android:layout_height="170dp"
-                    android:layout_margin="16dp"
+                    android:layout_marginHorizontal="20dp"
                     android:background="@drawable/sbs_timer_bg"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.865"
                     tools:layout_editor_absoluteX="16dp" />
 
                 <TextView
@@ -138,6 +255,7 @@
                     android:id="@+id/ivWebImageSmall"
                     android:layout_width="155dp"
                     android:layout_height="155dp"
+                    android:layout_marginVertical="20dp"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/roundedCornersImageView"
                     app:layout_constraintBottom_toTopOf="@+id/vwTimerBody"
@@ -150,7 +268,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Second View -->
-<!--        TODO: finish layout-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clLowerSection2"
             android:layout_width="match_parent"
@@ -179,11 +296,11 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivWebImageSmall2"
-                    android:layout_width="155dp"
-                    android:layout_height="155dp"
+                    android:layout_margin="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-                    app:layout_constraintBottom_toBottomOf="@id/clUpperSection2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@tools:sample/avatars" />

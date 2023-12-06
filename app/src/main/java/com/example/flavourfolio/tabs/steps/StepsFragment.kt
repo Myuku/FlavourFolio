@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -62,6 +63,17 @@ class StepsFragment : Fragment() {
     // Timer Components
     private lateinit var timerReceiver: BroadcastReceiver
     private var timerRunning: Boolean = false
+    // Text elements
+    private lateinit var inTextView: TextView
+    private lateinit var inTextViewLabel: TextView
+    private lateinit var forTextView: TextView
+    private lateinit var forTextViewLabel: TextView
+    private lateinit var untilTextView: TextView
+    private lateinit var untilTextViewLabel: TextView
+    private lateinit var recipeNameTextView: TextView
+    private lateinit var recipeLabelTextView: TextView
+    private lateinit var actionLabelTextView: TextView
+    private lateinit var actionTextTextView: TextView
 
     private lateinit var view: View
     private var sharedPref: SharedPreferences? = null
@@ -112,10 +124,21 @@ class StepsFragment : Fragment() {
             btnPrevStep.visibility = VISIBLE
             tvCurrentStep.visibility = VISIBLE
             pbProgressBar.visibility = VISIBLE
+            actionLabelTextView.visibility = VISIBLE
+            actionTextTextView.visibility = VISIBLE
+            inTextViewLabel.visibility = VISIBLE
+            inTextView.visibility = VISIBLE
+            forTextViewLabel.visibility = VISIBLE
+            forTextView.visibility = VISIBLE
+            untilTextViewLabel.visibility = VISIBLE
+            untilTextView.visibility = VISIBLE
+            recipeNameTextView.visibility = VISIBLE
+            recipeLabelTextView.visibility = VISIBLE
             // Update all the values to the new values
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.updateRecipe(newRecipeId).join()
                 determineView('n')
+                recipeNameTextView.text = viewModel.currRecipe.name
                 tvCurrentStep.text = resources.getString(R.string.sbs_lo_step_counter, viewModel.currProgress)
                 pbProgressBar.max = viewModel.maxSteps
                 pbProgressBar.progress = viewModel.currProgress
@@ -140,6 +163,17 @@ class StepsFragment : Fragment() {
         // Initialize Buttons
         btnNextStep = view.findViewById(R.id.btnNextStep)
         btnPrevStep = view.findViewById(R.id.btnPrevStep)
+        // Initialize Text
+        inTextViewLabel = view.findViewById(R.id.inTextLabel)
+        inTextView = view.findViewById(R.id.inText)
+        forTextViewLabel = view.findViewById(R.id.forTextLabel)
+        forTextView = view.findViewById(R.id.forText)
+        untilTextViewLabel = view.findViewById(R.id.untilTextLabel)
+        untilTextView = view.findViewById(R.id.untilText)
+        recipeNameTextView = view.findViewById(R.id.recipeNameText)
+        recipeLabelTextView = view.findViewById(R.id.recipeNameLabel)
+        actionLabelTextView = view.findViewById(R.id.actionTextLabel)
+        actionTextTextView = view.findViewById(R.id.actionText)
     }
 
     private fun initializeTimer() {
@@ -205,7 +239,7 @@ class StepsFragment : Fragment() {
         }
     }
 
-    private fun initializeImage() { // TODO: Fix race condition issue with images
+    private fun initializeImage() {
         //ivWebImageLarge = view.findViewById(R.id.ivWebImageLarge)
         ivWebImageSmall = view.findViewById(R.id.ivWebImageSmall)
         var ivWebImageSmall2 : ShapeableImageView = view.findViewById(R.id.ivWebImageSmall2)
@@ -236,6 +270,39 @@ class StepsFragment : Fragment() {
         }
     }
 
+    private fun initializeText() {
+
+        actionLabelTextView.text = viewModel.currSteps[viewModel.currProgress-1].action
+        actionTextTextView.text = viewModel.currSteps[viewModel.currProgress-1].food
+
+        if (viewModel.actionIn?.detail == null) {
+            inTextViewLabel.visibility = GONE
+            inTextView.visibility = GONE
+        } else {
+            inTextViewLabel.visibility = VISIBLE
+            inTextView.visibility = VISIBLE
+            inTextView.text = viewModel.actionIn?.detail
+        }
+
+        if (viewModel.actionFor?.detail == null) {
+            forTextViewLabel.visibility = GONE
+            forTextView.visibility = GONE
+        } else {
+            forTextViewLabel.visibility = VISIBLE
+            forTextView.visibility = VISIBLE
+            forTextView.text = viewModel.actionFor?.detail
+        }
+
+        if (viewModel.actionUntil?.detail == null) {
+            untilTextViewLabel.visibility = GONE
+            untilTextView.visibility = GONE
+        } else {
+            untilTextViewLabel.visibility = VISIBLE
+            untilTextView.visibility = VISIBLE
+            untilTextView.text = viewModel.actionUntil?.detail
+        }
+    }
+
 
     // ALL VIEW FLIPPER STUFF
     @SuppressLint("NewApi")
@@ -259,10 +326,12 @@ class StepsFragment : Fragment() {
             viewModel.recipeTimer = (localTime.toSecondOfDay() * 1000).toLong()
 
             initializeImage()
+            initializeText()
             showView(StepViewState.TIMER, direction)
         } else {
             // Without Timer
             initializeImage()
+            initializeText()
             showView(StepViewState.PICTURE, direction)
         }
         //setActionViews()
