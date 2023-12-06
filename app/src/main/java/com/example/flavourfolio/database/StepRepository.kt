@@ -8,8 +8,13 @@ class StepRepository(private val stepDao: StepDao) {
     val allSteps: Flow<List<Step>> = stepDao.getAllSteps()
 
     @WorkerThread
-    fun retrieveSteps(rid: Int): Flow<List<Step>> {
+    suspend fun retrieveSteps(rid: Int): List<Step> {
         return stepDao.getStepsForRecipe(rid)
+    }
+
+    @WorkerThread
+    suspend fun hasTimer(sid: Int): Boolean {
+        return stepDao.hasTimer(sid)
     }
 
     @WorkerThread

@@ -1,11 +1,14 @@
 package com.example.flavourfolio.tabs.steps
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.example.flavourfolio.database.Action
 import com.example.flavourfolio.database.ActionRepository
+import com.example.flavourfolio.database.Recipe
+import com.example.flavourfolio.database.RecipeRepository
 import com.example.flavourfolio.database.Step
 import com.example.flavourfolio.database.StepRepository
 import kotlinx.coroutines.launch
@@ -14,24 +17,22 @@ import java.util.concurrent.TimeUnit
 
 
 class StepsViewModel(
+    private val recipeRepository: RecipeRepository,
     private val stepRepository: StepRepository,
     private val actionRepository: ActionRepository
     ) : ViewModel() {
 
-    var currentSteps: LiveData<List<Step>>? = null
+    lateinit var currRecipe: Recipe
     var recipeId: Int = -1
 
-    var currProgress = 1
-        private set
-    var maxSteps = 10 // TODO: Always do numSteps + 1 to display complete screen
-        private set
-    var recipeTimer: Long = TimeUnit.MINUTES.toMillis(10)
-        private set
-    var action = "fry"
-        private set
-    var subject = "tomato"
-        private set
+    var currSteps: List<Step> = emptyList()
+    var actionIn: Action? = null
+    var actionFor: Action? = null
+    var actionUntil: Action? = null
 
+    var currProgress = 0
+    var maxSteps = 0
+    var recipeTimer: Long = 0
 
     fun incrementStep(): Int {
         if (currProgress >= maxSteps) {
@@ -50,19 +51,28 @@ class StepsViewModel(
     fun updateRecipe(rid: Int) = viewModelScope.launch {
         recipeId = rid
         currProgress = 1
-        maxSteps = stepRepository.length(rid)
-        //currentSteps = stepRepository.retrieveSteps(rid)?.asLiveData()
+        maxSteps = stepRepository.length(rid) + 1
+
+        currRecipe = recipeRepository.getRecipe(rid)
+        currSteps = stepRepository.retrieveSteps(rid)
     }
+
+    suspend fun retrieveActions(sid: Int) = viewModelScope.launch {
+        actionIn = actionRepository.retrieveIn(sid)
+        actionFor = actionRepository.retrieveFor(sid)
+        actionUntil = actionRepository.retrieveUntil(sid)
+    }.join() // prevents a race condition
 
 
     @Suppress("UNCHECKED_CAST")
     class StepsViewModelFactory(
+        private val recipeRepository: RecipeRepository,
         private val stepRepository: StepRepository,
         private val actionRepository: ActionRepository
     ) : ViewModelProvider.Factory {
         override fun<T: ViewModel> create(modelClass: Class<T>) : T{
             if(modelClass.isAssignableFrom(StepsViewModel::class.java))
-                return StepsViewModel(stepRepository, actionRepository) as T
+                return StepsViewModel(recipeRepository, stepRepository, actionRepository) as T
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

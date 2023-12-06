@@ -38,13 +38,14 @@ interface StepDao {
     @Query("DELETE FROM steps_table WHERE step_id = :id")
     suspend fun delete(id: Int)
 
-    @Query("SELECT EXISTS(SELECT * FROM recipes_table WHERE recipe_id = :recipeId)")
-    suspend fun isRecipeExist(recipeId: Int): Boolean
+    @Query("SELECT EXISTS(SELECT * FROM actions_table WHERE step_id = :stepId AND affix = 'FOR')")
+    suspend fun hasTimer(stepId: Int): Boolean
 
     @Query("SELECT COUNT(*) FROM steps_table WHERE recipe_id = :recipeId")
     suspend fun length(recipeId: Int): Int
+
     @Query("SELECT * FROM steps_table WHERE recipe_id = :recipeId ORDER BY step_id")
-    fun getStepsForRecipe(recipeId: Int): Flow<List<Step>>
+    suspend fun getStepsForRecipe(recipeId: Int): List<Step>
     // Add other required queries
 
     @Query("SELECT * FROM steps_table")
@@ -63,7 +64,12 @@ interface ActionDao {
     @Query("SELECT EXISTS(SELECT * FROM steps_table WHERE step_id = :stepId)")
     suspend fun isStepExist(stepId: Int): Boolean
 
-    @Query("SELECT * FROM actions_table WHERE step_id = :stepId")
-    fun getDetailsForStep(stepId: Int): Flow<List<Action>>
-    // Add other required queries
+    @Query("SELECT * FROM actions_table WHERE step_id = :stepId AND affix = 'IN'")
+    suspend fun getInForStep(stepId: Int): Action?
+    @Query("SELECT * FROM actions_table WHERE step_id = :stepId AND affix = 'FOR'")
+    suspend fun getForForStep(stepId: Int): Action?
+    @Query("SELECT * FROM actions_table WHERE step_id = :stepId AND affix = 'UNTIL'")
+    suspend fun getUntilForStep(stepId: Int): Action?
+
+
 }

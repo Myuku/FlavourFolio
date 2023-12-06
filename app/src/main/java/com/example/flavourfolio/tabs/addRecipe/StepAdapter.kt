@@ -118,10 +118,18 @@ class StepAdapter(private val context: Context, private val recipeId: Int,
                     ))
                 }
                 if (holders[i].cbFor.isChecked) {
+                    val timeArray = intArrayOf(
+                        holders[i].npHours.value,
+                        holders[i].npMinutes.value,
+                        holders[i].npSeconds.value
+                    )
+                    val time = timeArray.joinToString("-") { s: Int ->
+                        if (s < 10) { "0$s" } else { "$s" }
+                    }
                     viewModel.insertAction(Action(
                         sid = stepId.toInt(),
                         affix = AffixType.FOR,
-                        detail = "${holders[i].npHours.value}-${holders[i].npMinutes.value}-${holders[i].npSeconds.value}"
+                        detail = time
                     ))
                 }
                 if (holders[i].cbUntil.isChecked) {
