@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -146,7 +145,7 @@ class StepsFragment : Fragment() {
                 btnNextStep.alpha = 1.0f
             }
         }
-        // if equal, dont do anything
+        // if equal, don't do anything
     }
 
     private fun initializeViews() {
@@ -242,7 +241,7 @@ class StepsFragment : Fragment() {
     private fun initializeImage() {
         //ivWebImageLarge = view.findViewById(R.id.ivWebImageLarge)
         ivWebImageSmall = view.findViewById(R.id.ivWebImageSmall)
-        var ivWebImageSmall2 : ShapeableImageView = view.findViewById(R.id.ivWebImageSmall2)
+        val ivWebImageSmall2 : ShapeableImageView = view.findViewById(R.id.ivWebImageSmall2)
 
         CoroutineScope(IO).launch {
             val currentStep = viewModel.currSteps[viewModel.currProgress-1]
@@ -290,7 +289,21 @@ class StepsFragment : Fragment() {
         } else {
             forTextViewLabel.visibility = VISIBLE
             forTextView.visibility = VISIBLE
-            forTextView.text = viewModel.actionFor?.detail
+            val hours = viewModel.actionFor?.detail!!.substring(0,2).toInt()
+            val minutes = viewModel.actionFor?.detail!!.substring(3, 5).toInt()
+            val seconds = viewModel.actionFor?.detail!!.substring(6, 8).toInt()
+            var timeString = ""
+
+            if (hours != 0) {
+                timeString += String.format(" %d Hours", hours)
+            }
+            if (minutes != 0) {
+                timeString += String.format(" %d Minutes", minutes)
+            }
+            if (seconds != 0) {
+                timeString += String.format(" %d Seconds", seconds)
+            }
+            forTextView.text = timeString
         }
 
         if (viewModel.actionUntil?.detail == null) {
@@ -353,22 +366,17 @@ class StepsFragment : Fragment() {
             initializeText()
             showView(StepViewState.PICTURE, direction)
         }
-        //setActionViews()
-    }
-
-    private fun setActionViews() {
-        TODO("Not yet implemented")
     }
 
     private fun showView(type: StepViewState, direction: Char) {
         when (direction) {
             'r' -> {
-                //vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_right)
-                //vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left)
+                vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_right)
+                vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_left)
             }
             'l' -> {
-                //vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_left)
-                //vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right)
+                vfViewFlipper.setInAnimation(requireContext(), R.anim.slide_in_left)
+                vfViewFlipper.setOutAnimation(requireContext(), R.anim.slide_out_right)
             }
             else -> {
                 vfViewFlipper.inAnimation = null

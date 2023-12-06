@@ -34,7 +34,6 @@
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@id/recipeNameLabel"
-        android:textStyle="bold"
         android:text="RecipeName"/>
 
     <ProgressBar
@@ -74,6 +73,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:textSize="22sp"
+            android:layout_marginTop="5dp"
+            android:textColor="#D1747E"
             android:textStyle="bold"
             android:text="Action"/>
         <TextView
@@ -83,21 +84,32 @@
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="@id/actionTextLabel"
             app:layout_constraintLeft_toRightOf="@id/actionTextLabel"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
             android:textStyle="bold"
+            android:textColor="#467BAA"
             android:text="ActionText"
-            android:textSize="22sp"/>
+            android:textSize="28sp"/>
+
+        <View
+            android:id="@+id/blankSpacer"
+            android:layout_width="wrap_content"
+            android:layout_height="16sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/actionText"
+            />
 
         <TextView
             android:id="@+id/inTextLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/actionText"
+            app:layout_constraintTop_toBottomOf="@+id/blankSpacer"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:text="In:"/>
+
         <TextView
             android:id="@+id/inText"
             android:layout_width="wrap_content"
@@ -106,6 +118,7 @@
             app:layout_constraintTop_toTopOf="@id/inTextLabel"
             app:layout_constraintLeft_toRightOf="@id/inTextLabel"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
             android:text="InText"
             android:textSize="18sp"/>
 
@@ -116,7 +129,7 @@
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/inText"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:text="For:"/>
         <TextView
@@ -127,6 +140,7 @@
             app:layout_constraintTop_toTopOf="@+id/forTextLabel"
             app:layout_constraintLeft_toRightOf="@id/forTextLabel"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
             android:text="forText"
             android:textSize="18sp" />
 
@@ -137,7 +151,7 @@
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/forText"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:text="Until:"/>
         <TextView
@@ -148,6 +162,7 @@
             app:layout_constraintTop_toTopOf="@+id/untilTextLabel"
             app:layout_constraintLeft_toRightOf="@id/untilTextLabel"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="2dp"
             android:text="untilText"
             android:textSize="18sp"/>
 
@@ -253,14 +268,16 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivWebImageSmall"
-                    android:layout_width="155dp"
-                    android:layout_height="155dp"
-                    android:layout_marginVertical="20dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="30dp"
                     android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
                     app:layout_constraintBottom_toTopOf="@+id/vwTimerBody"
-                    app:layout_constraintEnd_toEndOf="@+id/vwTimerBody"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
                     tools:src="@tools:sample/avatars" />
 
 

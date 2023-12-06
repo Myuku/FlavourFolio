@@ -17,7 +17,7 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes_table WHERE recipe_id IS :id")
     suspend fun getRecipe(id: Int): Recipe
 
-    @Query("SELECT * FROM recipes_table")
+    @Query("SELECT * FROM recipes_table ORDER BY recipe_id")
     fun getAllRecipesByDate(): Flow<List<Recipe>>
 
     @Query("SELECT * FROM recipes_table ORDER BY name")
@@ -25,6 +25,9 @@ interface RecipeDao {
 
     @Query("SELECT * FROM recipes_table WHERE name LIKE '%' || :str || '%'")
     fun getAllRecipesBySearch(str: String): Flow<List<Recipe>>
+
+    @Query("SELECT * FROM actions_table WHERE step_id IN (SELECT step_id FROM steps_table WHERE recipe_id = :recipeId) AND affix = 'FOR'")
+    suspend fun allTimes(recipeId: Int): List<Action>
 }
 
 @Dao

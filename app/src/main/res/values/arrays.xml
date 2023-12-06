@@ -3,7 +3,6 @@
     <string-array name="sort_by_values">
         <item>Date</item>
         <item>Alphabetical</item>
-        <item>Availability</item>
     </string-array>
 
     <string-array name="action_values">

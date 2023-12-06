@@ -60,7 +60,8 @@
         <SearchView
             android:id="@+id/svSearch"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:layout_height="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="10dp"
@@ -91,7 +92,7 @@
             <!--Desserts section-->
             <TextView
                 android:id="@+id/desserts_text"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/recipe_header_dessert"
                 android:layout_marginStart="10dp"

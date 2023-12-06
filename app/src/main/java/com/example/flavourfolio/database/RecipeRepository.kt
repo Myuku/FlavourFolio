@@ -58,4 +58,17 @@ class RecipeRepository(private val recipeDao: RecipeDao) {
         recipeDao.delete(rid)
     }
 
+    @WorkerThread
+    suspend fun allTimes(rid: Int): Long {
+        val list = recipeDao.allTimes(rid)
+        var time: Long = 0
+        for (action in list) {
+            val hours = action.detail.substring(0,2).toInt()
+            val minutes = action.detail.substring(3, 5).toInt()
+            val seconds = action.detail.substring(6, 8).toInt()
+            time += (hours * 3600) + (minutes * 60) + seconds
+        }
+        return time
+    }
+
 }

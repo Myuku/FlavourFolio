@@ -39,7 +39,8 @@ class RecipesFragment : Fragment() {
 
 
     private val viewModel: RecipesViewModel by viewModels {
-        RecipesViewModelFactory((requireActivity().application as FlavourFolioApplication).recipeRepository)
+        RecipesViewModelFactory((requireActivity().application as FlavourFolioApplication).recipeRepository,
+                                (requireActivity().application as FlavourFolioApplication).stepRepository)
     }
 
     override fun onCreateView(
@@ -182,10 +183,10 @@ class RecipesFragment : Fragment() {
 
     private fun fillAdapters() {
         // Create Adapter
-        val dessertsAdapter = CardAdapter()
-        val dinnerAdapter = CardAdapter()
-        val breakfastAdapter = CardAdapter()
-        val lunchAdapter = CardAdapter()
+        val dessertsAdapter = CardAdapter(requireContext(), viewModel)
+        val dinnerAdapter = CardAdapter(requireContext(), viewModel)
+        val breakfastAdapter = CardAdapter(requireContext(), viewModel)
+        val lunchAdapter = CardAdapter(requireContext(), viewModel)
         // Set onClickListener
         dessertsAdapter.onItemClick = this::useRecipe
         dinnerAdapter.onItemClick = this::useRecipe
