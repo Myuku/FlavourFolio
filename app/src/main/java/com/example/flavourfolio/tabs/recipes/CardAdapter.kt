@@ -1,5 +1,6 @@
 package com.example.flavourfolio.tabs.recipes
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +11,18 @@ import com.example.flavourfolio.R
 import com.example.flavourfolio.database.Recipe
 
 
-class CardAdapter (list: List<Recipe>) :
+class CardAdapter :
     RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 
-
-    private var recipeList: List<Recipe> = list
+    private var recipeList = mutableListOf<Recipe>()
     var onItemClick : ((Recipe) -> Unit) ?= null
     override fun getItemCount(): Int = recipeList.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun replace(newList: List<Recipe>){
-        recipeList = newList
+        recipeList.clear()
+        recipeList.addAll(newList)
+        notifyDataSetChanged()
     }
 
     // Make changes here if we are adding new elements to the view
@@ -37,16 +40,6 @@ class CardAdapter (list: List<Recipe>) :
                 thumbnail.setImageBitmap(recipe.image)
             }
          }
-
-        init {
-//            // Set long click listener on the itemView
-//            itemView.setOnLongClickListener {
-//                // Handle long click, open a dialog or bottom sheet to replace the card
-//                // Show the list of cards for replacement
-//                true
-//            }
-        }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
