@@ -3,6 +3,7 @@ package com.example.flavourfolio
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.database.CursorWindow
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -44,6 +45,14 @@ class MainActivity : AppCompatActivity() {
             supportActionBar?.hide()
         }
         requestPermissions()
+
+        try {
+            val field = CursorWindow::class.java.getDeclaredField("sCursorWindowSize")
+            field.isAccessible = true
+            field.set(null, 100 * 1024 * 1024)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         tabTitles = arrayOf(getString(R.string.tab_recipes),
         getString(R.string.tab_step_by_step), getString(R.string.tab_fridge))
