@@ -2,12 +2,13 @@ package com.example.flavourfolio.tabs.recipes
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.SearchView
 import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -34,10 +35,11 @@ class RecipesFragment : Fragment() {
     private lateinit var lunchView: RecyclerView
     private lateinit var fabAddRecipe: FloatingActionButton
     private lateinit var spnrSortBy: Spinner
+    private lateinit var svSearch: SearchView
+
 
     private val viewModel: RecipesViewModel by viewModels {
-        RecipesViewModelFactory((requireActivity().application as FlavourFolioApplication).recipeRepository,
-                                (requireActivity().application as FlavourFolioApplication).stepRepository)
+        RecipesViewModelFactory((requireActivity().application as FlavourFolioApplication).recipeRepository)
     }
 
     override fun onCreateView(
@@ -56,11 +58,6 @@ class RecipesFragment : Fragment() {
         fabAddRecipe.setOnClickListener {
             val dialog = AddRecipeDialog()
             dialog.show(parentFragmentManager, "Add Recipe Dialog")
-
-            // Testing
-//            Log.d("myu", "inserting Steak")
-//            val recipe = Recipe(name = "Steak", type = RecipeType.DINNER)
-//            viewModel.insert(recipe)
         }
     }
 
@@ -118,49 +115,19 @@ class RecipesFragment : Fragment() {
         breakfastView.layoutManager = LinearLayoutManager(requireContext())
         lunchView.layoutManager = LinearLayoutManager(requireContext())
 
-        val dessertsAdapter = CardAdapter(emptyList())
-        dessertsAdapter.onItemClick = this::useRecipe
-        val dinnerAdapter = CardAdapter(emptyList())
-        dinnerAdapter.onItemClick = this::useRecipe
-        val breakfastAdapter = CardAdapter(emptyList())
-        breakfastAdapter.onItemClick = this::useRecipe
-        val lunchAdapter = CardAdapter(emptyList())
-        lunchAdapter.onItemClick = this::useRecipe
-
-
-        dessertsView.adapter = dessertsAdapter
-        dinnerView.adapter = dinnerAdapter
-        breakfastView.adapter = breakfastAdapter
-        lunchView.adapter = lunchAdapter
-
-
-        // Set adapter to the custom card adapter
-        // Need to do the janky notifyDataSetChanged() way to set onClickListeners :C
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.dessertsLiveData.observe(viewLifecycleOwner) { desserts ->
-                dessertsAdapter.replace(desserts)
-                dessertsAdapter.notifyDataSetChanged()
-            }
-            viewModel.dinnerLiveData.observe(viewLifecycleOwner) { dinner ->
-                dinnerAdapter.replace(dinner)
-                dinnerAdapter.notifyDataSetChanged()
-            }
-            viewModel.breakfastLiveData.observe(viewLifecycleOwner) { breakfast ->
-                breakfastAdapter.replace(breakfast)
-                breakfastAdapter.notifyDataSetChanged()
-            }
-            viewModel.lunchLiveData.observe(viewLifecycleOwner) { lunch ->
-                lunchAdapter.replace(lunch)
-                lunchAdapter.notifyDataSetChanged()
-            }
-        }
         // Attach swipeToDelete on all recyclerViews
         enableSwipeToDelete(view, dessertsView)
         enableSwipeToDelete(view, dinnerView)
         enableSwipeToDelete(view, breakfastView)
         enableSwipeToDelete(view, lunchView)
 
+        fillAdapters()
 
+        initializeSort(view)
+        initializeSearch(view)
+    }
+
+    private fun initializeSort(view: View) {
         spnrSortBy = view.findViewById(R.id.spnrSortBy)
         val sortAdapter = ArrayAdapter.createFromResource(
             requireActivity(),
@@ -168,6 +135,82 @@ class RecipesFragment : Fragment() {
             android.R.layout.simple_spinner_dropdown_item
         )
         spnrSortBy.adapter = sortAdapter
+        spnrSortBy.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            val items = resources.getStringArray(R.array.sort_by_values)
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (items[position]) {
+                    "Alphabetical" -> viewModel.sortAlphabetical()
+                    "Date" -> viewModel.sortByDate()
+                }
+            }
+        }
+    }
+
+    private fun initializeSearch(view: View) {
+        svSearch = view.findViewById(R.id.svSearch)
+        svSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (!newText.isNullOrEmpty()) {
+                    viewModel.searchBy(newText)
+                } else {
+                    when (spnrSortBy.selectedItem) {
+                        "Alphabetical" -> viewModel.sortAlphabetical()
+                        "Date" -> viewModel.sortByDate()
+                    }
+                }
+                return true
+            }
+        })
+        svSearch.setOnCloseListener {
+            when (spnrSortBy.selectedItem) {
+                "Alphabetical" -> viewModel.sortAlphabetical()
+                "Date" -> viewModel.sortByDate()
+            }
+            true
+        }
+    }
+
+    private fun fillAdapters() {
+        // Create Adapter
+        val dessertsAdapter = CardAdapter()
+        val dinnerAdapter = CardAdapter()
+        val breakfastAdapter = CardAdapter()
+        val lunchAdapter = CardAdapter()
+        // Set onClickListener
+        dessertsAdapter.onItemClick = this::useRecipe
+        dinnerAdapter.onItemClick = this::useRecipe
+        breakfastAdapter.onItemClick = this::useRecipe
+        lunchAdapter.onItemClick = this::useRecipe
+        // Set Adapter
+        dessertsView.adapter = dessertsAdapter
+        dinnerView.adapter = dinnerAdapter
+        breakfastView.adapter = breakfastAdapter
+        lunchView.adapter = lunchAdapter
+        // Set adapter to the custom card adapter
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.dessertsLiveData.observe(viewLifecycleOwner) { desserts ->
+                dessertsAdapter.replace(desserts)
+            }
+            viewModel.dinnerLiveData.observe(viewLifecycleOwner) { dinner ->
+                dinnerAdapter.replace(dinner)
+            }
+            viewModel.breakfastLiveData.observe(viewLifecycleOwner) { breakfast ->
+                breakfastAdapter.replace(breakfast)
+            }
+            viewModel.lunchLiveData.observe(viewLifecycleOwner) { lunch ->
+                lunchAdapter.replace(lunch)
+            }
+        }
     }
 
     private fun useRecipe(recipe: Recipe) {

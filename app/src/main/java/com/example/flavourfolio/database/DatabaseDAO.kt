@@ -18,19 +18,13 @@ interface RecipeDao {
     suspend fun getRecipe(id: Int): Recipe
 
     @Query("SELECT * FROM recipes_table")
-    fun getAllRecipes(): Flow<List<Recipe>>
+    fun getAllRecipesByDate(): Flow<List<Recipe>>
 
-    @Query("SELECT * FROM recipes_table WHERE type = 'DESSERT'")
-    fun getDessertRecipes(): Flow<List<Recipe>>
+    @Query("SELECT * FROM recipes_table ORDER BY name")
+    fun getAllRecipesByAlpha(): Flow<List<Recipe>>
 
-    @Query("SELECT * FROM recipes_table WHERE type = 'DINNER'")
-    fun getDinnerRecipes(): Flow<List<Recipe>>
-
-    @Query("SELECT * FROM recipes_table WHERE type = 'BREAKFAST'")
-    fun getBreakfastRecipes(): Flow<List<Recipe>>
-
-    @Query("SELECT * FROM recipes_table WHERE type = 'LUNCH'")
-    fun getLunchRecipes(): Flow<List<Recipe>>
+    @Query("SELECT * FROM recipes_table WHERE name LIKE '%' || :str || '%'")
+    fun getAllRecipesBySearch(str: String): Flow<List<Recipe>>
 }
 
 @Dao
